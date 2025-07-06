@@ -1202,7 +1202,7 @@ export class UltraEliteAgentDeployment extends EventEmitter {
     };
 
     // Build category summary with revenue calculations
-    for (const [categoryKey, category] of this.agentCategories) {
+    for (const [categoryKey, category] of Array.from(this.agentCategories.entries())) {
       const categoryAgents = Array.from(this.deployedAgents.values())
         .filter(agent => agent.category === categoryKey);
 
@@ -1331,7 +1331,7 @@ export class UltraEliteAgentDeployment extends EventEmitter {
   private calculateRevenuePotential(): number {
     let potential = 0;
     
-    for (const agent of this.deployedAgents.values()) {
+    for (const agent of Array.from(this.deployedAgents.values())) {
       const monthlyRentals = this.AVERAGE_RENTALS_PER_AGENT_PER_MONTH;
       const agentMonthlyRevenue = agent.price * monthlyRentals;
       potential += agentMonthlyRevenue;
@@ -1378,18 +1378,18 @@ export class UltraEliteAgentDeployment extends EventEmitter {
     
     try {
       // Deactivate all agents systematically
-      for (const agent of this.deployedAgents.values()) {
+      for (const agent of Array.from(this.deployedAgents.values())) {
         agent.status = 'inactive';
         agent.last_active = new Date();
       }
       
       // Complete active rentals
-      for (const rental of this.activeRentals.values()) {
+      for (const rental of Array.from(this.activeRentals.values())) {
         rental.status = 'completed';
       }
       
       // Cleanup phone numbers
-      for (const phoneDetails of this.phoneNumbers.values()) {
+      for (const phoneDetails of Array.from(this.phoneNumbers.values())) {
         phoneDetails.status = 'inactive';
       }
       
@@ -1405,10 +1405,8 @@ export class UltraEliteAgentDeployment extends EventEmitter {
 export default UltraEliteAgentDeployment;
 
 // Auto-execution demonstration with comprehensive error handling
-if (require.main === module) {
+async function ultraGrindDemo(): Promise<void> {
   const agentDeployment = new UltraEliteAgentDeployment();
-  
-  async function ultraGrindDemo(): Promise<void> {
     try {
       console.log('🚀 STARTING ULTRA GRIND AGENT DEPLOYMENT WITH TYPESCRIPT PRECISION...');
       
@@ -1450,7 +1448,8 @@ if (require.main === module) {
       process.exit(1);
     }
   }
-  
+
+if (require.main === module) {
   ultraGrindDemo().catch((error) => {
     console.error('💥 UNHANDLED ERROR:', error);
     process.exit(1);

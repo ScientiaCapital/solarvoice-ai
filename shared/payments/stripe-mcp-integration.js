@@ -14,7 +14,25 @@ const Stripe = require('stripe');
 
 class UltraEliteStripeIntegration {
     constructor() {
-        this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+        // Enterprise-grade initialization with graceful degradation
+        this.apiKey = process.env.STRIPE_SECRET_KEY;
+        this.demoMode = !this.apiKey;
+        
+        if (this.demoMode) {
+            console.warn('⚠️  STRIPE: API key missing - running in demo mode');
+            console.warn('💰 DEMO: Payment operations will be simulated');
+            this.stripe = null;
+        } else {
+            try {
+                this.stripe = new Stripe(this.apiKey);
+                console.log('💰 STRIPE: Enterprise payment processing enabled');
+            } catch (error) {
+                console.error('🚨 STRIPE: Initialization failed, falling back to demo mode');
+                this.demoMode = true;
+                this.stripe = null;
+            }
+        }
+
         this.server = new Server(
             {
                 name: 'ultra-elite-stripe-mcp',

@@ -64,6 +64,7 @@ interface MCPContent {
  */
 interface MCPResponse {
   content: MCPContent[];
+  [key: string]: unknown;
 }
 
 /**
@@ -94,6 +95,7 @@ interface PaymentMetadata {
   payment_type?: string;
   total_project_value?: number;
   tier?: SubscriptionTier;
+  [key: string]: string | number | 'solarvoice_ai' | AgentRentalDuration | SubscriptionTier | undefined;
 }
 
 /**
@@ -282,7 +284,7 @@ export class UltraEliteStripeIntegration {
     }
     
     this.stripe = new Stripe(stripeKey, {
-      apiVersion: '2023-10-16', // Latest stable API version
+      apiVersion: '2025-06-30.basil', // Latest stable API version
       typescript: true          // Enable TypeScript support
     });
 
@@ -509,17 +511,17 @@ export class UltraEliteStripeIntegration {
       try {
         switch (name) {
           case 'rent_ai_agent':
-            return await this.processAgentRental(args as AgentRentalArgs);
+            return await this.processAgentRental(args as unknown as AgentRentalArgs);
           case 'create_subscription_tier':
-            return await this.createSubscription(args as SubscriptionArgs);
+            return await this.createSubscription(args as unknown as SubscriptionArgs);
           case 'process_solar_project_payment':
-            return await this.processSolarPayment(args as SolarPaymentArgs);
+            return await this.processSolarPayment(args as unknown as SolarPaymentArgs);
           case 'distribute_commission':
-            return await this.distributeCommission(args as CommissionArgs);
+            return await this.distributeCommission(args as unknown as CommissionArgs);
           case 'get_revenue_dashboard':
-            return await this.getRevenueDashboard(args as RevenueDashboardArgs);
+            return await this.getRevenueDashboard(args as unknown as RevenueDashboardArgs);
           case 'setup_bnpl_payment':
-            return await this.setupBNPLPayment(args as BNPLPaymentArgs);
+            return await this.setupBNPLPayment(args as unknown as BNPLPaymentArgs);
           default:
             throw new PaymentError(`Unknown payment tool: ${name}`, 'UNKNOWN_TOOL');
         }
@@ -687,9 +689,7 @@ Status: ${subscription.status}
           items: [{
             price_data: {
               currency: 'usd',
-              product_data: {
-                name: 'Solar Installation - Monthly Payment'
-              },
+              product: 'prod_solar_installation',
               unit_amount: monthlyAmount,
               recurring: {
                 interval: 'month',

@@ -1,0 +1,29 @@
+{
+  "name": "@solarvoice/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript type definitions for SolarVoice AI Platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "solarvoice",
+    "types",
+    "typescript",
+    "solar",
+    "ai"
+  ],
+  "author": "SolarVoice Ultra Elite AI Team",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "rimraf": "^5.0.0"
+  }
+}

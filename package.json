@@ -36,17 +36,17 @@
     "prepare": "husky install"
   },
   "devDependencies": {
-    "turbo": "^1.13.4",
-    "concurrently": "^8.2.0",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
+    "concurrently": "^8.2.0",
     "eslint": "^8.56.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsdoc": "^48.0.4",
-    "prettier": "^3.2.5",
-    "typescript": "^5.3.3",
     "husky": "^8.0.3",
-    "lint-staged": "^15.2.0"
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.5",
+    "turbo": "^1.13.4",
+    "typescript": "^5.3.3"
   },
   "lint-staged": {
     "shared/**/*.ts": [
@@ -56,5 +56,13 @@
     ]
   },
   "author": "SolarVoice Ultra Elite AI Team",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-slot": "^1.2.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.294.0",
+    "tailwind-merge": "^2.6.0"
+  }
 }

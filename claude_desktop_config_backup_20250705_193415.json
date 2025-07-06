@@ -1,0 +1,39 @@
+{
+  "mcpServers": {
+    "ultra-elite-mcp": {
+      "command": "node",
+      "args": ["/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/ultra-elite-test/mcp-servers/server.js"],
+      "cwd": "/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai"
+    },
+    "stripe-payments": {
+      "command": "node",
+      "args": ["/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/shared/payments/stripe-mcp-integration.js"],
+      "cwd": "/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai"
+    },
+    "project-intelligence": {
+      "command": "node",
+      "args": ["/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/solarvoice-platform/libs/mcp/project-intelligence-server/dist/index.js"],
+      "cwd": "/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/solarvoice-platform/libs/mcp/project-intelligence-server"
+    },
+    "google-solar": {
+      "command": "node",
+      "args": ["/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/solarvoice-platform/libs/mcp/google-solar-server/dist/index.js"],
+      "cwd": "/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/solarvoice-platform/libs/mcp/google-solar-server"
+    },
+    "retell-ai": {
+      "command": "node",
+      "args": ["/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/solarvoice-platform/libs/mcp/retell-ai-server/dist/index.js"],
+      "cwd": "/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/solarvoice-platform/libs/mcp/retell-ai-server"
+    },
+    "google-maps": {
+      "command": "node",
+      "args": ["/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/solarvoice-platform/libs/mcp/google-maps-server/dist/index.js"],
+      "cwd": "/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/solarvoice-platform/libs/mcp/google-maps-server"
+    },
+    "agent-marketplace": {
+      "command": "node",
+      "args": ["/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/solarvoice-platform/libs/mcp/agent-marketplace/dist/index.js"],
+      "cwd": "/Users/tmk/Documents/01_Active_Projects/Learning/solarvoice_ai/solarvoice-platform/libs/mcp/agent-marketplace"
+    }
+  }
+}

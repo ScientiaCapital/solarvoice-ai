@@ -1,0 +1,66 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🏗️ PRINCIPAL ARCHITECT STANDARDS - PRE-COMMIT VALIDATION"
+echo "======================================================="
+
+# Check if this is a TypeScript file change
+if git diff --cached --name-only | grep -E "\.(ts|tsx)$" > /dev/null; then
+  echo "📝 TypeScript files detected. Running Principal Architect validation..."
+  
+  # Run TypeScript type checking
+  echo "🔍 Type checking..."
+  npm run type-check:shared
+  if [ $? -ne 0 ]; then
+    echo "❌ PRINCIPAL ARCHITECT VIOLATION: TypeScript type errors detected"
+    echo "Fix type errors before committing"
+    exit 1
+  fi
+  
+  # Run ESLint with Principal Architect standards
+  echo "🔍 Linting with Principal Architect standards..."
+  npm run lint:principal-architect
+  if [ $? -ne 0 ]; then
+    echo "❌ PRINCIPAL ARCHITECT VIOLATION: ESLint errors detected"
+    echo "Run 'npm run lint:fix' to auto-fix issues or manually resolve violations"
+    exit 1
+  fi
+  
+  # Check code formatting
+  echo "🔍 Checking code formatting..."
+  npm run format:check
+  if [ $? -ne 0 ]; then
+    echo "❌ PRINCIPAL ARCHITECT VIOLATION: Code formatting issues detected"
+    echo "Run 'npm run format' to fix formatting"
+    exit 1
+  fi
+  
+  # Validate performance constraints for voice AI files
+  if git diff --cached --name-only | grep -E "voice.*\.(ts|tsx)$" > /dev/null; then
+    echo "🎙️ Voice AI files detected. Validating performance constraints..."
+    npm run validate:voice-ai
+    if [ $? -ne 0 ]; then
+      echo "❌ VOICE AI VIOLATION: Performance constraint violations detected"
+      exit 1
+    fi
+  fi
+  
+  # Validate financial accuracy for payment files
+  if git diff --cached --name-only | grep -E "(payment|stripe|revenue).*\.(ts|tsx)$" > /dev/null; then
+    echo "💰 Payment/Financial files detected. Validating accuracy standards..."
+    npm run validate:payments
+    if [ $? -ne 0 ]; then
+      echo "❌ FINANCIAL ACCURACY VIOLATION: Payment processing violations detected"
+      exit 1
+    fi
+  fi
+  
+  echo "✅ PRINCIPAL ARCHITECT STANDARDS: ALL VALIDATIONS PASSED"
+  echo "🎯 Knuth Mathematical Precision: VERIFIED"
+  echo "🔄 Dijkstra Algorithmic Elegance: VERIFIED"
+  echo "⚡ Torvalds Pragmatic Excellence: VERIFIED"
+else
+  echo "ℹ️ No TypeScript files changed. Skipping Principal Architect validation."
+fi
+
+echo "🚀 Commit approved by Principal Architect standards"

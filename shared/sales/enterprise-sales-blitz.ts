@@ -178,6 +178,7 @@ interface EnterpriseProspect extends ProspectBase {
   event_name?: string;
   partner_name?: string;
   referrer_id?: string;
+  lost_reason?: DealLossReason;
 }
 
 /**
@@ -830,7 +831,7 @@ export class EnterpriseSalesBlitz extends EventEmitter {
     console.log('📞 PROFIT: Launching outbound sales campaign with algorithmic precision...');
     
     // Execute outbound touches with staggered timing
-    for (const [prospectId, prospect] of this.enterpriseProspects) {
+    for (const [prospectId, prospect] of Array.from(this.enterpriseProspects.entries())) {
       if (prospect.status === 'prospecting') {
         setTimeout(() => {
           this.executeOutboundTouch(prospectId, prospect);
@@ -1399,11 +1400,11 @@ export class EnterpriseSalesBlitz extends EventEmitter {
    */
   private updateSalesMetrics(): void {
     // Update pipeline values for each AE
-    for (const [aeId, ae] of this.salesTeam) {
+    for (const [aeId, ae] of Array.from(this.salesTeam.entries())) {
       let pipelineValue = 0;
       let activeDealCount = 0;
       
-      for (const deal of this.activeDeals.values()) {
+      for (const deal of Array.from(this.activeDeals.values())) {
         if (deal.assigned_ae === aeId) {
           pipelineValue += Math.floor(deal.potential_deal * deal.probability);
           activeDealCount++;
@@ -1472,7 +1473,7 @@ export class EnterpriseSalesBlitz extends EventEmitter {
    */
   private calculatePipelineValue(): number {
     let totalPipeline = 0;
-    for (const deal of this.activeDeals.values()) {
+    for (const deal of Array.from(this.activeDeals.values())) {
       totalPipeline += Math.floor(deal.potential_deal * deal.probability);
     }
     return totalPipeline;
@@ -1538,12 +1539,12 @@ export class EnterpriseSalesBlitz extends EventEmitter {
     };
     
     // Count leads by source
-    for (const prospect of this.enterpriseProspects.values()) {
+    for (const prospect of Array.from(this.enterpriseProspects.values())) {
       channels[prospect.source].leads_generated++;
     }
     
     // Count closed deals and revenue by source
-    for (const deal of this.closedDeals.values()) {
+    for (const deal of Array.from(this.closedDeals.values())) {
       if (deal.status === 'closed_won') {
         channels[deal.source].deals_closed++;
         channels[deal.source].revenue_generated += deal.deal_value;
@@ -1626,7 +1627,7 @@ export class EnterpriseSalesBlitz extends EventEmitter {
       closed_lost: 0
     };
     
-    for (const prospect of this.enterpriseProspects.values()) {
+    for (const prospect of Array.from(this.enterpriseProspects.values())) {
       dealsByStage[prospect.status]++;
     }
     
@@ -1696,10 +1697,8 @@ export class EnterpriseSalesBlitz extends EventEmitter {
 export default EnterpriseSalesBlitz;
 
 // Auto-execution demonstration with comprehensive error handling
-if (require.main === module) {
+async function ultraGrindSalesDemo(): Promise<void> {
   const salesBlitz = new EnterpriseSalesBlitz();
-  
-  async function ultraGrindSalesDemo(): Promise<void> {
     try {
       console.log('🚀 STARTING ULTRA GRIND ENTERPRISE SALES BLITZ WITH TYPESCRIPT PRECISION...');
       
@@ -1757,7 +1756,8 @@ if (require.main === module) {
       process.exit(1);
     }
   }
-  
+
+if (require.main === module) {
   ultraGrindSalesDemo().catch((error) => {
     console.error('💥 UNHANDLED ERROR:', error);
     process.exit(1);
