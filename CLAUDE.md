@@ -2,20 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## SolarVoice AI Platform - ENTERPRISE HARDENED & PRODUCTION READY
+## SolarVoice AI Platform - Multi-Domain Voice-First Platform
 
-🏆 **PRINCIPAL ARCHITECT CERTIFIED** - Enterprise hardening complete with zero vulnerabilities, 99.99% uptime guarantee, and bank-grade security.
-
-This is a comprehensive voice-first solar construction AI platform with enterprise-grade infrastructure, complete security hardening, performance optimization, and production-ready deployment capabilities.
+This is a comprehensive voice-first solar construction AI platform with multi-domain architecture, MCP server integration, and production-ready deployment capabilities.
 
 The platform consists of multiple integrated systems:
 
-### 1. ENTERPRISE HARDENING COMPLETE (13 Agents Deployed)
-- **Phase 4.1**: JavaScript Elimination (TITAN, ATLAS) ✅
-- **Phase 4.2**: Infrastructure Hardening (APOLLO, ARTEMIS, ZEUS, HERMES) ✅
-- **Phase 4.3**: Security Hardening (NOVA, NEBULA, COSMOS, STELLAR) ✅
-- **Phase 4.4**: Production Readiness (GUARDIAN, BEACON, HARMONY) ✅
-- **Phase 4.5**: Principal Architect Certification ✅
+### 1. Multi-Domain Platform Architecture
+- **solarvoice.ai**: Main AI agent marketplace and voice platform
+- **netzerobot.com**: AI chatbot platform for solar consultations
+- **netzerocalculator.com**: Solar calculation and estimation tools
+- **netzeroexpert.com**: Expert consultation and advisory system
 
 ### 2. MCP Server Integration
 - **Stripe MCP**: Payment processing, subscriptions, revenue analytics
@@ -23,11 +20,13 @@ The platform consists of multiple integrated systems:
 - **Retell AI MCP**: Voice capabilities and phone provisioning
 - **Dev Tools MCP**: React components, Next.js setup, Vercel deployment
 
-### 3. Multi-Domain Platform
-- **solarvoice.ai**: Main AI agent marketplace
-- **netzerobot.com**: AI chatbot platform
-- **netzerocalculator.com**: Solar calculation tools
-- **netzeroexpert.com**: Expert consultation system
+### 3. Core Technology Stack
+- **Frontend**: Next.js 14 with TypeScript across all domains
+- **Styling**: Tailwind CSS with shared component library
+- **Backend**: Node.js services with TypeScript
+- **Voice**: ElevenLabs v3, Retell AI, WebRTC integration
+- **Payments**: Stripe integration with MCP server
+- **Deployment**: Vercel with automated CI/CD
 
 ## Development Commands
 
@@ -36,7 +35,7 @@ The platform consists of multiple integrated systems:
 # Start main development server
 npm run dev
 
-# Start enterprise monitoring (99.99% uptime)
+# Start monitoring system
 node shared/monitoring/system-monitoring.ts
 
 # Start Stripe payment processing
@@ -48,15 +47,6 @@ npm run test:integration
 
 # Build for production
 npm run build
-```
-
-### ULTRA ELITE Team Deployment
-```bash
-# Deploy complete stack to all repositories
-./scripts/deploy-complete-stack-to-all-repos.sh
-
-# Deploy just the AI team
-./scripts/deploy-ultra-team-to-all-repos.sh
 ```
 
 ### Multi-Domain Deployment
@@ -82,44 +72,28 @@ python3 deploy_crew.py
 python3 test_crewai_bridge.py
 ```
 
-### Frontend Stack
-- **Next.js 14** with TypeScript for all domain applications
-- **Tailwind CSS** for styling across all platforms
-- **React components** shared across domains via `/shared/components/`
+### Quality Assurance
+```bash
+# Run linting and formatting
+npm run lint
+npm run format
 
-### Backend & APIs
-- **Node.js** with TypeScript for MCP servers
-- **Stripe API** integration via MCP for payments
-- **Google Solar API** for solar potential analysis
-- **Retell AI** for voice capabilities
-- **Waze API** for traffic and routing
+# Type checking
+npm run type-check
 
-### Infrastructure
-- **Vercel** deployment for all 4 domains
-- **GitHub Actions** for CI/CD
-- **System monitoring** with 99.99% uptime protection
-- **Real-time analytics** dashboard
+# Quality validation
+npm run quality:check
+```
 
 ## Critical File Locations
 
-### Core Systems (Enterprise Hardened)
-- `/shared/monitoring/system-monitoring.ts` - 99.99% uptime monitoring system
-- `/shared/infrastructure/enterprise-logging.ts` - Microsecond precision logging
-- `/shared/infrastructure/resilience-patterns.ts` - Circuit breakers & failover
-- `/shared/infrastructure/performance-optimization.ts` - <50ms response optimization
-- `/shared/infrastructure/rate-limiting.ts` - API protection & throttling
-- `/shared/security/security-audit.ts` - 99.9% threat detection
-- `/shared/security/input-validation.ts` - 100% injection prevention
-- `/shared/security/auth-hardening.ts` - Bank-grade MFA & JWT security
-- `/shared/security/data-encryption.ts` - Military-grade AES-256-GCM
-- `/shared/monitoring/health-checks.ts` - <10ms health validation
-- `/shared/testing/load-testing.ts` - 10,000 concurrent user testing
-- `/shared/documentation/auto-docs.ts` - Automated API generation
-
-### Team & Deployment
-- `/team/ULTRA_ELITE_TEAM_ROSTER.md` - Complete 30-person AI team structure
-- `/PRINCIPAL_ARCHITECT_CERTIFICATION.md` - Enterprise hardening certification
-- `/scripts/deploy-complete-stack-to-all-repos.sh` - Universal deployment script
+### Core Systems
+- `/shared/monitoring/system-monitoring.ts` - System monitoring and health checks
+- `/shared/infrastructure/` - Core infrastructure patterns and utilities
+- `/shared/security/` - Security implementations and validation
+- `/shared/payments/` - Payment processing and revenue systems
+- `/shared/voice/` - Voice AI integration and processing
+- `/shared/agents/` - AI agent deployment and management
 
 ### Multi-Domain Applications
 - `/vercel-deployments/solarvoice/` - Main AI marketplace
@@ -131,6 +105,11 @@ python3 test_crewai_bridge.py
 - `/solarvoice-platform/libs/mcp/` - All MCP server implementations
 - `/ultra-elite-test/mcp-servers/` - Simplified MCP deployment
 
+### Team & Documentation
+- `/team/ULTRA_ELITE_TEAM_ROSTER.md` - AI team structure and roles
+- `/documentation/` - Comprehensive documentation library
+- `/scripts/` - Deployment and automation scripts
+
 ## Important Development Patterns
 
 ### MCP Server Development
@@ -139,18 +118,22 @@ All MCP servers follow the Model Context Protocol standard and are located in `/
 - `src/index.ts` with server implementation
 - TypeScript configuration
 
-### ULTRA ELITE Team Integration
-The 30-person AI team is designed to be deployed to any repository. Team members have specific roles and can be referenced in code comments and documentation to maintain consistency.
-
-### Revenue-First Development
-All development should consider the $10K MRR target. Key revenue streams:
-- AI agent rentals ($0.99 - $299.99)
-- Subscription tiers ($99.99 - $999.99/month)
-- Solar project payments
-- BNPL integration (Affirm/Klarna)
-
 ### Multi-Domain Architecture
 The platform supports 4 domains with shared components in `/shared/` and domain-specific implementations in `/vercel-deployments/`. Cross-domain authentication is handled via unified auth system.
+
+### Voice-First Development
+All features should consider voice interaction as a primary interface:
+- Natural language processing for commands
+- Voice-to-text and text-to-voice capabilities
+- Real-time voice communication
+- Voice command validation and feedback
+
+### Revenue-First Development
+All development should consider revenue generation:
+- AI agent rentals and subscriptions
+- Payment processing integration
+- Revenue analytics and reporting
+- Customer onboarding optimization
 
 ## Environment Variables Required
 
@@ -159,6 +142,7 @@ The platform supports 4 domains with shared components in `/shared/` and domain-
 - `GOOGLE_SOLAR_API_KEY` - Solar potential data
 - `RETELL_AI_API_KEY` - Voice capabilities
 - `OPENAI_API_KEY` - AI model access
+- `ELEVENLABS_API_KEY` - Text-to-speech
 
 ### Deployment
 - `VERCEL_TOKEN` - Automated deployments
@@ -173,29 +157,41 @@ npm run test:integration   # Integration tests
 npm run test:e2e          # End-to-end tests
 ```
 
-### Code Quality (Principal Architect Standards)
+### Code Quality Standards
 ```bash
 npm run lint              # ESLint
 npm run format            # Prettier
-npm run typecheck         # TypeScript (Zero errors required)
-npm run security:audit    # Security vulnerability scan
-npm run test:load         # Load testing (10K concurrent users)
-npm run health:check      # Health monitoring validation
+npm run type-check        # TypeScript validation
+npm run quality:check     # Comprehensive quality validation
 ```
 
-## Revenue & Business Context (Enterprise Protected)
+## Business Context
 
-This platform is designed to achieve $10K MRR through:
-1. **Instant AI agent rentals** (30-second setup) with 99.99% uptime protection
-2. **Subscription marketplace** access with bank-grade security
-3. **Solar project payments** with BNPL and payment redundancy
-4. **Multi-domain expansion** across 4 products with enterprise infrastructure
+This platform is designed to provide comprehensive solar construction management through:
+1. **Voice-first interface** for field workers and managers
+2. **AI agent marketplace** for specialized solar tasks
+3. **Multi-domain approach** covering different aspects of solar business
+4. **Payment processing** for subscriptions and project payments
+5. **Real-time collaboration** across teams and projects
 
-**Revenue Protection Systems**:
-- Payment processing with 99.99% success rate
-- Circuit breakers preventing revenue-affecting failures
-- Real-time monitoring with instant failover
-- Load balancing for 10,000 concurrent paying users
-- Security systems preventing fraud and attacks
+**Key Revenue Streams**:
+- AI agent rentals and subscriptions
+- Solar project management tools
+- Expert consultation services
+- Payment processing fees
 
-The ULTRA ELITE team provides enterprise-grade technical foundation with mathematical precision, Dijkstra elegance, and Torvalds pragmatism.
+## Documentation Standards
+
+- All code should be documented with JSDoc comments
+- API endpoints must have OpenAPI specifications
+- User-facing features require user guides
+- Technical decisions should be documented in architecture docs
+- Security implementations need detailed documentation
+
+## Security Considerations
+
+- Input validation on all user inputs
+- Authentication and authorization for all endpoints
+- Secure payment processing with Stripe
+- Environment variable protection
+- Regular security audits and updates

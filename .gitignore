@@ -1,0 +1,35 @@
+# Secure and sensitive files
+secure/
+LIVE_DEPLOYMENT_INSTRUCTIONS.md
+ULTRA_ELITE_FINAL_STATUS.md
+VENTURE_SCALE_MASTER_PLAN.md
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+
+# Build outputs
+.next/
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
