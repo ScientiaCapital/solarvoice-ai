@@ -1,9 +1,11 @@
 {
   "root": true,
   "extends": [
-    "@typescript-eslint/recommended",
-    "@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:@typescript-eslint/strict"
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:@typescript-eslint/strict",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -57,6 +59,12 @@
         "selector": "memberLike",
         "modifiers": ["private"],
         "format": ["camelCase"],
+        "leadingUnderscore": "require"
+      },
+      {
+        "selector": "memberLike",
+        "modifiers": ["private", "readonly"],
+        "format": ["camelCase", "UPPER_CASE"],
         "leadingUnderscore": "require"
       },
       {
@@ -193,7 +201,7 @@
     "jsdoc/check-types": "error",
     "jsdoc/implements-on-classes": "error",
     "jsdoc/match-description": "error",
-    "jsdoc/newline-after-description": "error",
+    "jsdoc/tag-lines": ["error", "never", { "startLines": 1 }],
     "jsdoc/no-types": "error",
     "jsdoc/require-description": "error",
     "jsdoc/require-description-complete-sentence": "error",

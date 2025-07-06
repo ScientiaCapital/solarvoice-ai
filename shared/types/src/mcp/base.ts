@@ -72,7 +72,7 @@ export interface MCPServerInfo {
   stats?: MCPServerStats;
 }
 
-export type MCPServerStatus = 'starting' | 'ready' | 'error' | 'stopped';
+export type MCPServerStatus = 'error' | 'ready' | 'starting' | 'stopped';
 
 export interface MCPServerStats {
   requestCount: number;

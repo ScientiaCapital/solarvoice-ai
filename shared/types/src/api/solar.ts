@@ -25,7 +25,7 @@ export interface SolarSystemConfig {
   shading?: ShadingInfo;
 }
 
-export type InverterType = 'string' | 'power' | 'micro';
+export type InverterType = 'micro' | 'power' | 'string';
 
 export interface ShadingInfo {
   morningShading: number; // 0-1 (0 = no shading, 1 = full shading)
@@ -63,7 +63,7 @@ export interface SolarSystem {
   updated_at: Date;
 }
 
-export type SolarSystemStatus = 'planned' | 'installing' | 'active' | 'maintenance' | 'deactivated';
+export type SolarSystemStatus = 'active' | 'deactivated' | 'installing' | 'maintenance' | 'planned';
 
 export interface SolarPerformanceData {
   id: string;
