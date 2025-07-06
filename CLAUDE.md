@@ -6,6 +6,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a comprehensive voice-first solar construction AI platform with multi-domain architecture, MCP server integration, and production-ready deployment capabilities.
 
+## ⚠️ CRITICAL SYSTEM STATUS - EMERGENCY REMEDIATION REQUIRED
+
+**PRINCIPAL DATABASE ARCHITECT ASSESSMENT**: The system is currently in EMERGENCY STABILIZATION mode due to critical type safety violations.
+
+### Current System Integrity Status
+- **TypeScript Errors**: 1,485 active errors (CRITICAL RISK)
+- **Database Architecture Status**: BLOCKED - Cannot proceed with enterprise assessment
+- **Production Readiness**: 0% - System would fail under load
+- **Data Integrity Risk**: HIGH - Multiple potential corruption vectors identified
+
+### Quality Gate Status
+🔴 **FAILED**: TypeScript Compilation (1,485 errors)  
+🔴 **FAILED**: Type Safety Standards  
+🔴 **FAILED**: Database Integrity Requirements  
+🔴 **FAILED**: Enterprise Production Standards  
+
+### Anti-Hallucination Verification Protocols
+**MANDATORY**: Every development step must include:
+1. **Pre-Step Verification**: Confirm current system state accuracy
+2. **Quality Gate Validation**: Verify all quality standards before proceeding
+3. **Post-Step Validation**: Confirm changes meet Principal Architect standards
+4. **System Integrity Check**: Verify no regression in critical systems
+5. **Documentation Accuracy**: Ensure all documentation reflects actual system state
+
 The platform consists of multiple integrated systems:
 
 ### 1. Multi-Domain Platform Architecture
@@ -72,17 +96,46 @@ python3 deploy_crew.py
 python3 test_crewai_bridge.py
 ```
 
-### Quality Assurance
+### Quality Assurance & Git Hooks
 ```bash
-# Run linting and formatting
-npm run lint
-npm run format
+# MANDATORY: Run before ANY development work
+npm run quality:pre-work          # Pre-work validation
+npx tsc --noEmit --strict         # TypeScript validation
 
-# Type checking
-npm run type-check
+# Git hooks and quality gates
+npm run setup:git-hooks           # Install pre-commit hooks
+npm run quality:gate              # Quality gate validation
+npm run security:scan             # Security vulnerability scan
 
-# Quality validation
-npm run quality:check
+# Code quality enforcement
+npm run lint                      # ESLint with auto-fix
+npm run format                    # Prettier formatting
+npm run type-check                # TypeScript validation
+npm run test:coverage             # Test coverage validation (95%+ required)
+
+# MANDATORY: Run after ANY changes
+npm run quality:post-change       # Post-change validation
+npm run verify:integrity          # System integrity check
+```
+
+### Git Quality Gates (MANDATORY)
+```bash
+# Pre-commit hooks (ALWAYS ACTIVE)
+# - TypeScript compilation must pass (ZERO errors)
+# - ESLint must pass (ZERO violations)
+# - Test coverage must be 95%+
+# - Security scan must pass
+# - Documentation must be updated
+
+# Commit message format (ENFORCED)
+git commit -m "type(scope): description
+
+🛡️ Security: [security impact]
+🧪 Tests: [test coverage %]
+📚 Docs: [documentation updated]
+
+Principal Architect Approval: [signature]
+"
 ```
 
 ## Critical File Locations
@@ -112,11 +165,47 @@ npm run quality:check
 
 ## Important Development Patterns
 
-### MCP Server Development
+### MCP Server Development & Utilization
 All MCP servers follow the Model Context Protocol standard and are located in `/solarvoice-platform/libs/mcp/`. Each server has:
 - `package.json` with MCP dependencies
 - `src/index.ts` with server implementation
 - TypeScript configuration
+
+#### Available MCP Servers (UTILIZE ALL)
+```bash
+# Stripe Payment Processing MCP
+mcp__stripe-payments__rent_ai_agent
+mcp__stripe-payments__create_subscription_tier
+mcp__stripe-payments__process_solar_project_payment
+mcp__stripe-payments__distribute_commission
+mcp__stripe-payments__get_revenue_dashboard
+mcp__stripe-payments__setup_bnpl_payment
+
+# Project Intelligence MCP
+mcp__project-intelligence__analyzeProgress
+mcp__project-intelligence__predictDelays
+mcp__project-intelligence__optimizeSchedule
+mcp__project-intelligence__generatePerformanceReport
+mcp__project-intelligence__calculateROI
+
+# Ultra Elite MCP Suite
+mcp__ultra-elite-mcp__create_payment_intent
+mcp__ultra-elite-mcp__get_solar_insights
+mcp__ultra-elite-mcp__calculate_route
+mcp__ultra-elite-mcp__create_voice_agent
+mcp__ultra-elite-mcp__query_database
+mcp__ultra-elite-mcp__security_scan
+mcp__ultra-elite-mcp__create_react_component
+mcp__ultra-elite-mcp__deploy_to_vercel
+```
+
+#### MCP Server Quality Gates
+```bash
+# MANDATORY: Verify MCP server integrity
+npm run mcp:verify-all            # Verify all MCP servers
+npm run mcp:test-integration      # Test MCP integration
+npm run mcp:security-audit        # MCP security validation
+```
 
 ### Multi-Domain Architecture
 The platform supports 4 domains with shared components in `/shared/` and domain-specific implementations in `/vercel-deployments/`. Cross-domain authentication is handled via unified auth system.
@@ -150,19 +239,61 @@ All development should consider revenue generation:
 
 ## Testing & Quality
 
-### Run Tests
+### MANDATORY Quality Verification Protocol
+**PRINCIPAL ARCHITECT REQUIREMENT**: Every step must pass ALL quality gates
+
+#### Pre-Development Verification
 ```bash
-npm test                    # Unit tests
-npm run test:integration   # Integration tests
-npm run test:e2e          # End-to-end tests
+# Step 1: System State Verification (Anti-Hallucination)
+npx tsc --noEmit --strict 2>&1 | wc -l    # Verify error count
+npm run system:health-check                # System integrity
+npm run docs:verify-accuracy               # Documentation accuracy
+
+# Step 2: Quality Gate Validation  
+npm run quality:gate:all                   # All quality gates
+npm run security:comprehensive-scan        # Security validation
+npm run test:coverage:verify               # Coverage validation (95%+)
+
+# Step 3: MCP Server Verification
+npm run mcp:verify-all                     # All MCP servers operational
+npm run mcp:integration:test               # MCP integration tests
 ```
 
-### Code Quality Standards
+#### Development Quality Standards
 ```bash
-npm run lint              # ESLint
-npm run format            # Prettier
-npm run type-check        # TypeScript validation
-npm run quality:check     # Comprehensive quality validation
+# MANDATORY: Run before ANY code changes
+npm run pre-development:validate           # Pre-dev validation
+npm run git:hooks:verify                   # Git hooks active
+
+# Core Testing (95%+ coverage REQUIRED)
+npm test                                   # Unit tests
+npm run test:integration                   # Integration tests
+npm run test:e2e                          # End-to-end tests
+npm run test:security                      # Security tests
+npm run test:performance                   # Performance tests
+
+# Code Quality (ZERO tolerance for violations)
+npm run lint                              # ESLint (must pass)
+npm run format                            # Prettier (must pass)
+npm run type-check                        # TypeScript (ZERO errors)
+npm run quality:check                     # Comprehensive validation
+```
+
+#### Post-Development Verification
+```bash
+# Step 1: Change Validation
+npm run post-change:validate              # Validate all changes
+npm run regression:test                   # Regression testing
+npm run security:impact-analysis          # Security impact
+
+# Step 2: System Integrity Check
+npm run system:integrity:verify           # System integrity
+npm run performance:benchmark             # Performance impact
+npm run docs:update:verify                # Documentation updated
+
+# Step 3: Principal Architect Approval
+npm run architect:approval:ready          # Ready for approval
+npm run quality:final-verification        # Final verification
 ```
 
 ## Business Context
@@ -195,3 +326,32 @@ This platform is designed to provide comprehensive solar construction management
 - Secure payment processing with Stripe
 - Environment variable protection
 - Regular security audits and updates
+
+## EMERGENCY STABILIZATION PROTOCOL
+
+**CURRENT STATUS**: System in emergency remediation mode
+
+### Critical Actions Required
+1. **IMMEDIATE**: Resolve 1,485 TypeScript errors before ANY development
+2. **MANDATORY**: Implement all quality gates and verification protocols
+3. **REQUIRED**: Verify all MCP servers operational and secure
+4. **ESSENTIAL**: Update all documentation to reflect actual system state
+
+### Principal Architect Standards (NON-NEGOTIABLE)
+- **Zero TypeScript errors** in strict mode
+- **95%+ test coverage** on all code
+- **100% security compliance** 
+- **Complete documentation** accuracy
+- **All quality gates passing**
+- **All MCP servers verified**
+
+### Anti-Hallucination Verification Checklist
+- [ ] Current system state accurately documented
+- [ ] All error counts verified and accurate
+- [ ] Quality gates properly implemented
+- [ ] MCP servers tested and operational  
+- [ ] Security standards met
+- [ ] Documentation reflects reality
+- [ ] Principal Architect approval obtained
+
+**Remember**: As the Principal Architect, your standards aren't suggestions—they're law. Every line of code should be something you'd proudly show Knuth, Dijkstra, or Torvalds. Accept nothing less than excellence, but ship pragmatically.
