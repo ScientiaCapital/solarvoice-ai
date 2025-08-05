@@ -1,0 +1,268 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model agent_feedback {
+  id              Int            @id @default(autoincrement())
+  agent_id        Int?
+  rating          Int?
+  feedback_text   String?
+  language_used   String?        @db.VarChar(10)
+  user_session_id String?        @db.VarChar(255)
+  created_at      DateTime?      @default(now()) @db.Timestamp(6)
+  agents_custom   agents_custom? @relation(fields: [agent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([agent_id], map: "idx_feedback_agent_id")
+  @@index([rating], map: "idx_feedback_rating")
+}
+
+model agent_languages {
+  id                      Int            @id @default(autoincrement())
+  agent_id                Int?
+  language_code           String         @db.VarChar(10)
+  personality_translation String?
+  voice_id                String?        @db.VarChar(100)
+  voice_settings          Json?          @default("{}")
+  is_primary              Boolean?       @default(false)
+  created_at              DateTime?      @default(now()) @db.Timestamp(6)
+  agents_custom           agents_custom? @relation(fields: [agent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([agent_id], map: "idx_agent_languages_agent_id")
+  @@index([language_code], map: "idx_agent_languages_language_code")
+}
+
+model agent_performance_metrics {
+  id                      Int            @id @default(autoincrement())
+  agent_id                Int?
+  metric_date             DateTime?      @default(dbgenerated("CURRENT_DATE")) @db.Date
+  total_interactions      Int?           @default(0)
+  successful_interactions Int?           @default(0)
+  avg_response_time_ms    Int?           @default(0)
+  voice_generation_count  Int?           @default(0)
+  error_count             Int?           @default(0)
+  language_breakdown      Json?          @default("{\"en\": 0, \"es\": 0}")
+  created_at              DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at              DateTime?      @default(now()) @db.Timestamp(6)
+  agents_custom           agents_custom? @relation(fields: [agent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([agent_id, metric_date])
+  @@index([agent_id], map: "idx_performance_metrics_agent_id")
+  @@index([metric_date], map: "idx_performance_metrics_date")
+}
+
+model agent_usage_events {
+  id              Int            @id @default(autoincrement())
+  agent_id        Int?
+  event_type      String         @db.VarChar(50)
+  event_data      Json?          @default("{}")
+  user_session_id String?        @db.VarChar(255)
+  ip_address      String?        @db.Inet
+  user_agent      String?
+  language_used   String?        @db.VarChar(10)
+  created_at      DateTime?      @default(now()) @db.Timestamp(6)
+  agents_custom   agents_custom? @relation(fields: [agent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([agent_id], map: "idx_usage_events_agent_id")
+  @@index([created_at], map: "idx_usage_events_created_at")
+  @@index([event_type], map: "idx_usage_events_type")
+}
+
+model agents {
+  id                        Int                 @id @default(autoincrement())
+  name                      String              @db.VarChar(255)
+  company                   String?             @db.VarChar(255)
+  category                  String?             @db.VarChar(100)
+  description               String?
+  personality               String?
+  pricing_half_day          Decimal?            @db.Decimal(10, 2)
+  pricing_full_day          Decimal?            @db.Decimal(10, 2)
+  pricing_per_minute        Decimal?            @db.Decimal(10, 4)
+  elevenlabs_voice_id       String?             @db.VarChar(255)
+  voice_sample_url          String?
+  voice_characteristics     Json?
+  context7_profile          Json?
+  environmental_suitability Json?
+  performance_by_context    Json?
+  gemini_personality_prompt String?
+  ai_optimization_score     Decimal?            @db.Decimal(3, 2)
+  success_rate              String?             @db.VarChar(10)
+  avg_call_time             String?             @db.VarChar(10)
+  rating                    Decimal?            @default(0) @db.Decimal(3, 2)
+  reviews                   Int?                @default(0)
+  integrations              String[]
+  industries                String[]
+  stages                    Int?                @default(1)
+  demo_available            Boolean?            @default(true)
+  created_at                DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at                DateTime?           @default(now()) @db.Timestamp(6)
+  rentals                   rentals[]
+  user_interactions         user_interactions[]
+  voice_samples             voice_samples[]
+}
+
+model agents_custom {
+  id                        Int                         @id @default(autoincrement())
+  user_id                   String?                     @db.Uuid
+  name                      String                      @db.VarChar(255)
+  template_id               String                      @db.VarChar(100)
+  personality               String
+  voice_id                  String                      @db.VarChar(100)
+  voice_settings            Json?                       @default("{}")
+  environment_setting       String?                     @default("MOBILE") @db.VarChar(50)
+  integrations              Json?                       @default("[]")
+  pricing                   Json?                       @default("{\"fullDay\": 549, \"halfDay\": 299, \"perMinute\": 0.25}")
+  status                    String?                     @default("draft") @db.VarChar(50)
+  demo_available            Boolean?                    @default(false)
+  created_at                DateTime?                   @default(now()) @db.Timestamp(6)
+  updated_at                DateTime?                   @default(now()) @db.Timestamp(6)
+  agent_feedback            agent_feedback[]
+  agent_languages           agent_languages[]
+  agent_performance_metrics agent_performance_metrics[]
+  agent_usage_events        agent_usage_events[]
+
+  @@index([status], map: "idx_agents_custom_status")
+  @@index([template_id], map: "idx_agents_custom_template_id")
+  @@index([user_id], map: "idx_agents_custom_user_id")
+}
+
+model contractor_context {
+  id                         Int       @id @default(autoincrement())
+  user_email                 String    @db.VarChar(255)
+  user_name                  String?   @db.VarChar(255)
+  expertise_level            String?   @db.VarChar(50)
+  primary_trade              String?   @db.VarChar(100)
+  company_size               String?   @db.VarChar(20)
+  years_experience           Int?
+  specializations            String[]
+  typical_job_sites          Json?
+  noise_tolerance            String?   @db.VarChar(20)
+  safety_requirements        Json?
+  geographic_region          String?   @db.VarChar(100)
+  climate_considerations     Json?
+  preferred_call_times       Json?
+  timezone                   String?   @db.VarChar(50)
+  project_phases             Json?
+  seasonal_patterns          Json?
+  urgency_patterns           String?   @db.VarChar(50)
+  primary_device             String?   @db.VarChar(50)
+  network_quality            String?   @db.VarChar(20)
+  preferred_integrations     String[]
+  technical_comfort_level    String?   @db.VarChar(20)
+  voice_quality_requirements String?   @db.VarChar(20)
+  budget_range               String?   @db.VarChar(50)
+  roi_requirements           Decimal?  @db.Decimal(5, 2)
+  rental_frequency           String?   @db.VarChar(20)
+  payment_preferences        String?   @db.VarChar(50)
+  cost_sensitivity           String?   @db.VarChar(20)
+  communication_style        String?   @db.VarChar(50)
+  team_structure             Json?
+  client_interaction_style   String?   @db.VarChar(50)
+  decision_making_style      String?   @db.VarChar(50)
+  cultural_considerations    Json?
+  success_metrics            Json?
+  preferred_agent_types      String[]
+  optimization_preferences   Json?
+  learning_preferences       String?   @db.VarChar(50)
+  feedback_patterns          Json?
+  context_confidence_score   Decimal?  @default(0.5) @db.Decimal(3, 2)
+  last_context_update        DateTime? @default(now()) @db.Timestamp(6)
+  created_at                 DateTime? @default(now()) @db.Timestamp(6)
+  updated_at                 DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model rentals {
+  id                       Int       @id @default(autoincrement())
+  agent_id                 Int?
+  user_email               String    @db.VarChar(255)
+  user_name                String?   @db.VarChar(255)
+  rental_type              String?   @db.VarChar(50)
+  start_date               DateTime? @db.Timestamp(6)
+  end_date                 DateTime? @db.Timestamp(6)
+  duration_hours           Int?
+  base_price               Decimal?  @db.Decimal(10, 2)
+  context_adjustment       Decimal?  @default(0) @db.Decimal(5, 2)
+  discount_percent         Decimal?  @default(0) @db.Decimal(5, 2)
+  total_price              Decimal?  @db.Decimal(10, 2)
+  retell_phone_number      String?   @db.VarChar(20)
+  elevenlabs_voice_config  Json?
+  gemini_customizations    Json?
+  context_snapshot         Json?
+  environmental_conditions Json?
+  performance_metrics      Json?
+  stripe_payment_intent_id String?   @db.VarChar(255)
+  status                   String?   @default("pending") @db.VarChar(50)
+  satisfaction_score       Decimal?  @db.Decimal(3, 2)
+  context_match_accuracy   Decimal?  @db.Decimal(3, 2)
+  optimization_suggestions Json?
+  created_at               DateTime? @default(now()) @db.Timestamp(6)
+  completed_at             DateTime? @db.Timestamp(6)
+  agents                   agents?   @relation(fields: [agent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model subscriptions {
+  id                           Int       @id @default(autoincrement())
+  user_email                   String    @db.VarChar(255)
+  plan_name                    String?   @db.VarChar(100)
+  billing_period               String?   @db.VarChar(20)
+  monthly_price                Decimal?  @db.Decimal(10, 2)
+  annual_price                 Decimal?  @db.Decimal(10, 2)
+  discount_percent             Decimal?  @db.Decimal(5, 2)
+  context_based_discounts      Json?
+  agent_limit                  Int?
+  features                     Json?
+  recommended_based_on_context Boolean?  @default(false)
+  context_match_score          Decimal?  @db.Decimal(3, 2)
+  stripe_subscription_id       String?   @db.VarChar(255)
+  status                       String?   @default("active") @db.VarChar(50)
+  created_at                   DateTime? @default(now()) @db.Timestamp(6)
+  expires_at                   DateTime? @db.Timestamp(6)
+  next_billing_date            DateTime? @db.Timestamp(6)
+}
+
+model system_health_metrics {
+  id                             Int       @id @default(autoincrement())
+  metric_date                    DateTime? @unique @default(dbgenerated("CURRENT_DATE")) @db.Date
+  api_uptime_percentage          Decimal?  @default(0) @db.Decimal(5, 2)
+  avg_api_response_time_ms       Int?      @default(0)
+  voice_api_success_rate         Decimal?  @default(0) @db.Decimal(5, 2)
+  database_connection_pool_usage Decimal?  @default(0) @db.Decimal(5, 2)
+  error_rate_percentage          Decimal?  @default(0) @db.Decimal(5, 2)
+  created_at                     DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([metric_date], map: "idx_system_health_date")
+}
+
+model user_interactions {
+  id                     Int       @id @default(autoincrement())
+  user_email             String?   @db.VarChar(255)
+  agent_id               Int?
+  action                 String?   @db.VarChar(100)
+  metadata               Json?
+  context_at_interaction Json?
+  device_context         Json?
+  environmental_context  Json?
+  user_satisfaction      Decimal?  @db.Decimal(3, 2)
+  context_relevance      Decimal?  @db.Decimal(3, 2)
+  optimization_data      Json?
+  created_at             DateTime? @default(now()) @db.Timestamp(6)
+  agents                 agents?   @relation(fields: [agent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model voice_samples {
+  id                     Int       @id @default(autoincrement())
+  agent_id               Int?
+  sample_text            String?
+  elevenlabs_audio_url   String?
+  duration_seconds       Int?
+  environmental_variants Json?
+  noise_optimization     Json?
+  device_optimization    Json?
+  created_at             DateTime? @default(now()) @db.Timestamp(6)
+  agents                 agents?   @relation(fields: [agent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}

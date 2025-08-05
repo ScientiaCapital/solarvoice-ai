@@ -9,20 +9,20 @@ declare global {
       DATABASE_URL?: string
       
       // Authentication
-      NEXTAUTH_URL?: string
-      NEXTAUTH_SECRET?: string
+      JWT_SECRET?: string
+      JWT_REFRESH_SECRET?: string
       
       // API Keys
       NEXT_PUBLIC_API_URL?: string
       API_SECRET_KEY?: string
       
-      // Third-party services
+      // AI Services
+      ANTHROPIC_API_KEY?: string
+      ELEVENLABS_API_KEY?: string
       NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?: string
-      OPENWEATHER_API_KEY?: string
       
       // Analytics
       NEXT_PUBLIC_GA_MEASUREMENT_ID?: string
-      NEXT_PUBLIC_VERCEL_ANALYTICS_ID?: string
       
       // Feature flags
       NEXT_PUBLIC_ENABLE_PWA?: string

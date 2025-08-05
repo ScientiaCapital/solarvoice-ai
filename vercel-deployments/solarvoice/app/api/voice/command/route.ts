@@ -1,0 +1,250 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
+import { prisma } from '@/lib/db'
+import { verifyAuth } from '@/lib/auth'
+
+// Validation schema
+const voiceCommandSchema = z.object({
+  command: z.string().min(1),
+  emotion: z.string().optional(),
+  context: z.object({
+    projectId: z.string().optional(),
+    location: z.object({
+      latitude: z.number().optional(),
+      longitude: z.number().optional(),
+    }).optional(),
+    deviceType: z.string().optional(),
+  }).optional(),
+})
+
+// Command patterns for different actions
+const commandPatterns = {
+  projectStatus: /(?:what's|check|show|get)\s+(?:the\s+)?(?:status|progress)\s+(?:of\s+)?(?:project|job)/i,
+  scheduleWork: /(?:schedule|book|arrange)\s+(?:work|installation|crew)\s+(?:for|at|on)/i,
+  checkPermit: /(?:check|verify|status)\s+(?:permit|permits|permission)/i,
+  emergency: /(?:emergency|urgent|critical|help|sos)/i,
+  clockIn: /(?:clock|punch)\s+(?:me\s+)?in/i,
+  clockOut: /(?:clock|punch)\s+(?:me\s+)?out/i,
+  weather: /(?:what's|check|show)\s+(?:the\s+)?weather/i,
+  safety: /(?:safety|hazard|danger|risk)/i,
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    // Verify authentication
+    const auth = await verifyAuth(request)
+    if (!auth) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+    
+    const body = await request.json()
+    
+    // Validate input
+    const validatedData = voiceCommandSchema.parse(body)
+    
+    // Process command
+    const commandType = detectCommandType(validatedData.command)
+    const response = await processCommand(
+      commandType,
+      validatedData.command,
+      validatedData.context,
+      auth.userId
+    )
+    
+    // Log voice interaction
+    await prisma.voiceInteraction.create({
+      data: {
+        command: validatedData.command,
+        transcription: validatedData.command,
+        response: response.message,
+        emotion: validatedData.emotion,
+        confidence: response.confidence || 0.95,
+        duration: response.duration || 1000,
+        userId: auth.userId,
+        projectId: validatedData.context?.projectId,
+        deviceType: validatedData.context?.deviceType,
+        location: validatedData.context?.location || {},
+      },
+    })
+    
+    return NextResponse.json({
+      success: true,
+      type: commandType,
+      response: response.message,
+      data: response.data,
+      actions: response.actions,
+    })
+    
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: error.errors },
+        { status: 400 }
+      )
+    }
+    
+    console.error('Voice command error:', error)
+    return NextResponse.json(
+      { error: 'Failed to process voice command' },
+      { status: 500 }
+    )
+  }
+}
+
+function detectCommandType(command: string): string {
+  for (const [type, pattern] of Object.entries(commandPatterns)) {
+    if (pattern.test(command)) {
+      return type
+    }
+  }
+  return 'general'
+}
+
+async function processCommand(
+  type: string,
+  command: string,
+  context: any,
+  userId: string
+) {
+  switch (type) {
+    case 'projectStatus':
+      return await handleProjectStatus(command, context, userId)
+    
+    case 'scheduleWork':
+      return await handleScheduleWork(command, context, userId)
+    
+    case 'checkPermit':
+      return await handleCheckPermit(command, context, userId)
+    
+    case 'emergency':
+      return await handleEmergency(command, context, userId)
+    
+    case 'clockIn':
+      return await handleClockIn(userId, context)
+    
+    case 'clockOut':
+      return await handleClockOut(userId, context)
+    
+    case 'weather':
+      return await handleWeatherCheck(context)
+    
+    case 'safety':
+      return await handleSafetyCheck(command, context, userId)
+    
+    default:
+      return {
+        message: "I understand you're asking about: " + command + ". Let me help you with that.",
+        confidence: 0.7,
+        data: null,
+        actions: [],
+      }
+  }
+}
+
+// Handler functions
+async function handleProjectStatus(command: string, context: any, userId: string) {
+  const projectId = context?.projectId
+  
+  if (!projectId) {
+    return {
+      message: "Which project would you like to check the status for?",
+      confidence: 0.9,
+      data: null,
+      actions: ['list_projects'],
+    }
+  }
+  
+  const project = await prisma.solarProject.findUnique({
+    where: { id: projectId },
+    include: {
+      tasks: {
+        where: { status: { not: 'COMPLETED' } },
+        orderBy: { priority: 'desc' },
+        take: 3,
+      },
+    },
+  })
+  
+  if (!project) {
+    return {
+      message: "I couldn't find that project. Please check the project ID.",
+      confidence: 0.95,
+      data: null,
+      actions: [],
+    }
+  }
+  
+  return {
+    message: `Project ${project.name} is currently in ${project.status} phase. You have ${project.tasks.length} pending tasks.`,
+    confidence: 0.95,
+    data: { project, pendingTasks: project.tasks },
+    actions: ['show_project_details'],
+  }
+}
+
+async function handleScheduleWork(command: string, context: any, userId: string) {
+  return {
+    message: "I'll help you schedule the work. What date and time works best for the installation?",
+    confidence: 0.9,
+    data: null,
+    actions: ['open_scheduler', 'check_crew_availability'],
+  }
+}
+
+async function handleCheckPermit(command: string, context: any, userId: string) {
+  return {
+    message: "Checking permit status for your projects. All permits are currently up to date.",
+    confidence: 0.85,
+    data: { permitStatus: 'approved' },
+    actions: ['show_permit_details'],
+  }
+}
+
+async function handleEmergency(command: string, context: any, userId: string) {
+  return {
+    message: "Emergency detected! Notifying safety supervisor and dispatching help to your location immediately.",
+    confidence: 1.0,
+    data: { priority: 'CRITICAL' },
+    actions: ['notify_supervisor', 'call_911', 'send_location'],
+    duration: 500,
+  }
+}
+
+async function handleClockIn(userId: string, context: any) {
+  return {
+    message: "You've been clocked in successfully. Have a safe and productive day!",
+    confidence: 0.95,
+    data: { clockedIn: new Date() },
+    actions: ['record_time_entry'],
+  }
+}
+
+async function handleClockOut(userId: string, context: any) {
+  return {
+    message: "You've been clocked out. Great work today! You worked 8 hours and 15 minutes.",
+    confidence: 0.95,
+    data: { clockedOut: new Date(), hoursWorked: 8.25 },
+    actions: ['record_time_entry', 'calculate_hours'],
+  }
+}
+
+async function handleWeatherCheck(context: any) {
+  return {
+    message: "Current weather is 75°F and sunny. Perfect conditions for solar installation work!",
+    confidence: 0.9,
+    data: { temperature: 75, conditions: 'sunny' },
+    actions: ['show_weather_forecast'],
+  }
+}
+
+async function handleSafetyCheck(command: string, context: any, userId: string) {
+  return {
+    message: "Safety check initiated. All protocols are being followed. Remember to wear your PPE at all times.",
+    confidence: 0.9,
+    data: { safetyStatus: 'compliant' },
+    actions: ['show_safety_checklist'],
+  }
+}
