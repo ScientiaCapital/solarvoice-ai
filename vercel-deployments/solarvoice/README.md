@@ -42,8 +42,9 @@ solarvoice/
 
 ### Prerequisites
 
-- Node.js 18+ 
-- npm or yarn or pnpm
+- Node.js 18+
+- HTTPS connection (required for Web Speech API)
+- Modern browser with microphone support
 
 ### Installation
 
