@@ -28,7 +28,17 @@ export async function POST(request: NextRequest) {
 
     // Default voice settings
     const defaultVoiceId = 'pNInz6obpgDQGcFmaJgB' // Adam - Professional male
-    const defaultModelId = 'eleven_turbo_v2_5' // Fast bilingual model
+    // Use highest quality model based on language
+    const isSpanish = language === 'es'
+    const defaultModelId = isSpanish ? 'eleven_multilingual_v2' : 'eleven_monolingual_v1'
+
+    // Log for debugging
+    console.log('ElevenLabs TTS Request:', {
+      voiceId: voiceId || defaultVoiceId,
+      modelId: modelId || defaultModelId,
+      textLength: text.length,
+      language: language || 'en',
+    })
 
     // Call ElevenLabs API from server
     const response = await fetch(
@@ -44,9 +54,9 @@ export async function POST(request: NextRequest) {
           text,
           model_id: modelId || defaultModelId,
           voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.5,
-            style: 0.5,
+            stability: 0.71,           // More natural variation (was 0.5)
+            similarity_boost: 0.75,     // Better voice matching (was 0.5)
+            style: 0.0,                // Remove style exaggeration for naturalness
             use_speaker_boost: true,
           },
         }),

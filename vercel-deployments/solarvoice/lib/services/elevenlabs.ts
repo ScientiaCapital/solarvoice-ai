@@ -48,7 +48,7 @@ class ElevenLabsService {
         body: JSON.stringify({
           text,
           voiceId,
-          modelId: 'eleven_turbo_v2_5', // Fast bilingual model
+          modelId: 'eleven_multilingual_v2', // Highest quality bilingual model
         }),
       })
 
