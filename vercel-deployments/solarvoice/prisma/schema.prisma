@@ -34,6 +34,7 @@ model User {
   favoriteModels    FavoriteModel[]
   voiceInteractions VoiceInteraction[]
   subscriptions     Subscription[]
+  customAgents      CustomAgent[]
   
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
@@ -528,4 +529,76 @@ model ModelPerformance {
   @@unique([modelId, date])
   @@index([modelId])
   @@index([date])
+}
+
+// =====================================================
+// CUSTOM AGENTS (User-Created Voice Agents)
+// =====================================================
+
+model CustomAgent {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  
+  // Agent Details
+  name            String
+  prompt          String    // Original creation prompt
+  role            String
+  description     String?
+  
+  // Voice Configuration
+  languages       String[]  // e.g., ["en", "es"]
+  voiceId         String    // ElevenLabs voice ID
+  voiceSettings   Json?     // Additional voice config
+  
+  // Knowledge & Capabilities
+  knowledgeBases  String[]  // Selected knowledge base IDs
+  capabilities    String[]  // List of capabilities
+  
+  // Status & Usage
+  isActive        Boolean   @default(true)
+  testMode        Boolean   @default(true) // In testing vs deployed
+  usageMinutes    Int       @default(0)
+  lastUsed        DateTime?
+  
+  // Pricing (for billing)
+  monthlyPrice    Decimal   @default(99) @db.Decimal(10, 2)
+  
+  // Metadata
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relationships
+  interactions    AgentInteraction[]
+  
+  @@index([userId])
+  @@index([isActive])
+}
+
+// Track interactions with custom agents
+model AgentInteraction {
+  id            String      @id @default(cuid())
+  agentId       String
+  agent         CustomAgent @relation(fields: [agentId], references: [id])
+  
+  // Interaction Details
+  sessionId     String      // Group related interactions
+  inputText     String?     // User's voice input (transcribed)
+  outputText    String?     // Agent's response
+  language      String      @default("en")
+  
+  // Voice Metrics
+  inputDuration Int?        // Duration in seconds
+  outputDuration Int?       // Duration in seconds
+  confidence    Decimal?    @db.Decimal(3, 2) // Recognition confidence
+  
+  // Context
+  context       Json?       // Conversation context/state
+  metadata      Json?       // Additional metadata
+  
+  createdAt     DateTime    @default(now())
+  
+  @@index([agentId])
+  @@index([sessionId])
+  @@index([createdAt])
 }

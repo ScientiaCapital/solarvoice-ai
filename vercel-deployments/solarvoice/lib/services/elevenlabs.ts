@@ -77,7 +77,7 @@ class ElevenLabsService {
       if (audioData instanceof ArrayBuffer) {
         arrayBuffer = audioData
       } else if (audioData instanceof Uint8Array) {
-        arrayBuffer = audioData.buffer
+        arrayBuffer = audioData.buffer.slice(audioData.byteOffset, audioData.byteOffset + audioData.byteLength)
       } else {
         throw new Error('Unsupported audio format')
       }
@@ -88,9 +88,9 @@ class ElevenLabsService {
       source.buffer = audioBuffer
       source.connect(audioContext.destination)
       
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         source.onended = () => resolve()
-        source.onerror = reject
+        source.addEventListener('error', reject)
         source.start()
       })
     } catch (error) {

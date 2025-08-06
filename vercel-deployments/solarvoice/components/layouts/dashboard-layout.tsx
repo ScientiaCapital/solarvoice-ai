@@ -14,7 +14,10 @@ import {
   Sun,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Mic,
+  Bot,
+  TestTube
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -24,6 +27,9 @@ interface DashboardLayoutProps {
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
+  { href: '/dashboard/agents', label: 'Voice Agents', icon: Bot },
+  { href: '/dashboard/agents/create', label: 'Create Agent', icon: Mic },
+  { href: '/dashboard/agents/test', label: 'Test Voice', icon: TestTube },
   { href: '/systems', label: 'Systems', icon: Sun },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/alerts', label: 'Alerts', icon: Bell },
