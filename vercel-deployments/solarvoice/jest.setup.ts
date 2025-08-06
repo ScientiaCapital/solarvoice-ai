@@ -5,11 +5,61 @@ import { TextEncoder, TextDecoder } from 'util'
 global.TextEncoder = TextEncoder
 global.TextDecoder = TextDecoder as any
 
+// Node 18+ has native fetch, but we need to ensure it's available globally
+// Skip whatwg-fetch as it conflicts with native fetch
+
+// Properly setup JSDOM environment for React testing
+if (typeof window !== 'undefined') {
+  // Fix HTMLElement for React DOM checks
+  if (!window.HTMLElement) {
+    // @ts-ignore
+    window.HTMLElement = window.Element
+  }
+  
+  // Ensure document.activeElement is properly set
+  if (typeof document !== 'undefined') {
+    const originalActiveElement = Object.getOwnPropertyDescriptor(Document.prototype, 'activeElement')
+    if (originalActiveElement) {
+      Object.defineProperty(document, 'activeElement', {
+        configurable: true,
+        enumerable: true,
+        get() {
+          const element = originalActiveElement.get?.call(this)
+          return element || document.body || document.documentElement
+        }
+      })
+    }
+  }
+  
+  // Mock window.location if needed
+  if (!window.location) {
+    // @ts-ignore
+    delete window.location
+    // @ts-ignore
+    window.location = {
+      href: 'http://localhost',
+      origin: 'http://localhost',
+      protocol: 'http:',
+      host: 'localhost',
+      hostname: 'localhost',
+      port: '',
+      pathname: '/',
+      search: '',
+      hash: '',
+      reload: jest.fn(),
+      assign: jest.fn(),
+      replace: jest.fn()
+    }
+  }
+}
+
 // Mock environment variables for testing
 process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY = 'test-api-key'
 process.env.JWT_SECRET = 'test-jwt-secret'
 process.env.JWT_REFRESH_SECRET = 'test-jwt-refresh-secret'
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test'
+process.env.STRIPE_SECRET_KEY = 'sk_test_123'
+process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_123'
 
 // Mock Web Speech API
 global.SpeechRecognition = jest.fn().mockImplementation(() => ({
@@ -75,31 +125,52 @@ global.AudioContext = jest.fn().mockImplementation(() => ({
 }))
 
 // Mock getUserMedia
-global.navigator.mediaDevices = {
-  getUserMedia: jest.fn().mockImplementation(() =>
+if (typeof navigator !== 'undefined' && typeof navigator.mediaDevices === 'undefined') {
+  Object.defineProperty(navigator, 'mediaDevices', {
+    value: {
+      getUserMedia: jest.fn().mockImplementation(() =>
+        Promise.resolve({
+          getTracks: () => [],
+          getAudioTracks: () => [],
+          getVideoTracks: () => [],
+          stop: jest.fn(),
+        })
+      ),
+      enumerateDevices: jest.fn().mockResolvedValue([]),
+      getSupportedConstraints: jest.fn().mockReturnValue({})
+    },
+    writable: true,
+    configurable: true
+  })
+} else if (typeof navigator !== 'undefined' && navigator.mediaDevices) {
+  // If mediaDevices already exists, just mock getUserMedia
+  const originalGetUserMedia = navigator.mediaDevices.getUserMedia
+  navigator.mediaDevices.getUserMedia = jest.fn().mockImplementation(() =>
     Promise.resolve({
       getTracks: () => [],
       getAudioTracks: () => [],
       getVideoTracks: () => [],
       stop: jest.fn(),
     })
-  ),
-} as any
+  )
+}
 
 // Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-})
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  })
+}
 
 // Mock IntersectionObserver
 global.IntersectionObserver = jest.fn().mockImplementation(() => ({
@@ -140,3 +211,45 @@ jest.mock('@elevenlabs/elevenlabs-js', () => ({
     }
   }))
 }))
+
+// Mock Zustand store with proper cleanup
+jest.mock('zustand')
+
+// Clean up after each test
+afterEach(() => {
+  jest.clearAllMocks()
+  jest.restoreAllMocks()
+})
+
+// Suppress React warnings in tests
+const originalError = console.error
+const originalWarn = console.warn
+
+beforeAll(() => {
+  console.error = (...args: any[]) => {
+    if (
+      typeof args[0] === 'string' &&
+      (args[0].includes('Warning: ReactDOM.render') ||
+       args[0].includes('Warning: Attempted to synchronously unmount') ||
+       args[0].includes('Should not already be working'))
+    ) {
+      return
+    }
+    originalError.call(console, ...args)
+  }
+  
+  console.warn = (...args: any[]) => {
+    if (
+      typeof args[0] === 'string' &&
+      args[0].includes('An update to')
+    ) {
+      return
+    }
+    originalWarn.call(console, ...args)
+  }
+})
+
+afterAll(() => {
+  console.error = originalError
+  console.warn = originalWarn
+})

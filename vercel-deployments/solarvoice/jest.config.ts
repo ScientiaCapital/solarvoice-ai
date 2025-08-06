@@ -10,7 +10,11 @@ const createJestConfig = nextJest({
 const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  setupFiles: ['<rootDir>/jest.polyfills.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },

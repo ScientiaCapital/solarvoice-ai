@@ -30,15 +30,34 @@ const commandPatterns = {
 }
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now()
+  const requestId = crypto.randomUUID()
+  
+  console.log('[VOICE_COMMAND_START]', {
+    requestId,
+    timestamp: new Date().toISOString(),
+    headers: Object.fromEntries(request.headers.entries()),
+  })
+  
   try {
     // Verify authentication
     const auth = await verifyAuth(request)
     if (!auth) {
+      console.log('[VOICE_COMMAND_AUTH_FAILED]', {
+        requestId,
+        timestamp: new Date().toISOString(),
+      })
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
+    
+    console.log('[VOICE_COMMAND_AUTH_SUCCESS]', {
+      requestId,
+      userId: auth.userId,
+      role: auth.role,
+    })
     
     const body = await request.json()
     
@@ -47,6 +66,15 @@ export async function POST(request: NextRequest) {
     
     // Process command
     const commandType = detectCommandType(validatedData.command)
+    
+    console.log('[VOICE_COMMAND_PROCESSING]', {
+      requestId,
+      userId: auth.userId,
+      command: validatedData.command,
+      commandType,
+      context: validatedData.context,
+    })
+    
     const response = await processCommand(
       commandType,
       validatedData.command,
@@ -70,25 +98,53 @@ export async function POST(request: NextRequest) {
       },
     })
     
+    const duration = Date.now() - startTime
+    
+    console.log('[VOICE_COMMAND_SUCCESS]', {
+      requestId,
+      userId: auth.userId,
+      commandType,
+      duration,
+      confidence: response.confidence,
+    })
+    
     return NextResponse.json({
       success: true,
       type: commandType,
       response: response.message,
       data: response.data,
       actions: response.actions,
+      requestId,
+      duration,
     })
     
   } catch (error) {
+    const duration = Date.now() - startTime
+    
     if (error instanceof z.ZodError) {
+      console.log('[VOICE_COMMAND_VALIDATION_ERROR]', {
+        requestId,
+        duration,
+        errors: error.errors,
+      })
       return NextResponse.json(
-        { error: 'Invalid input', details: error.errors },
+        { error: 'Invalid input', details: error.errors, requestId },
         { status: 400 }
       )
     }
     
-    console.error('Voice command error:', error)
+    console.error('[VOICE_COMMAND_ERROR]', {
+      requestId,
+      duration,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+      } : error,
+    })
+    
     return NextResponse.json(
-      { error: 'Failed to process voice command' },
+      { error: 'Failed to process voice command', requestId },
       { status: 500 }
     )
   }
