@@ -22,24 +22,22 @@ export function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'origin-when-cross-origin')
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
   
-  // Check if path requires authentication
-  const isProtectedPath = protectedPaths.some(path => pathname.startsWith(path))
-  const isAuthPath = authPaths.some(path => pathname.startsWith(path))
+  // MVP: DISABLE AUTH - Allow all access to dashboard
+  // TODO: Re-enable authentication after MVP testing
   
-  // Get auth token from cookie
-  const authToken = request.cookies.get('auth-token')?.value
+  // const isProtectedPath = protectedPaths.some(path => pathname.startsWith(path))
+  // const isAuthPath = authPaths.some(path => pathname.startsWith(path))
+  // const authToken = request.cookies.get('auth-token')?.value
   
-  // Redirect to login if accessing protected path without auth
-  if (isProtectedPath && !authToken) {
-    const url = new URL('/login', request.url)
-    url.searchParams.set('from', pathname)
-    return NextResponse.redirect(url)
-  }
+  // if (isProtectedPath && !authToken) {
+  //   const url = new URL('/login', request.url)
+  //   url.searchParams.set('from', pathname)
+  //   return NextResponse.redirect(url)
+  // }
   
-  // Redirect to dashboard if accessing auth path while authenticated
-  if (isAuthPath && authToken) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
-  }
+  // if (isAuthPath && authToken) {
+  //   return NextResponse.redirect(new URL('/dashboard', request.url))
+  // }
   
   return response
 }

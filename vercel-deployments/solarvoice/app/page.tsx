@@ -32,8 +32,10 @@ export default function HomePage() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <a href="/portal" className="hover:text-rental-yellow">Fleet Portal</a>
-            <a href="/support" className="hover:text-rental-yellow">Support</a>
+            <a href="/dashboard/agents" className="hover:text-rental-yellow font-bold">🎙️ Voice Agents</a>
+            <a href="/dashboard/agents/create" className="hover:text-rental-yellow font-bold">➕ Create Agent</a>
+            <a href="/dashboard/agents/test" className="hover:text-rental-yellow font-bold">🧪 Test Voice</a>
+            <a href="/dashboard" className="hover:text-rental-yellow">Dashboard</a>
           </div>
         </div>
       </div>
