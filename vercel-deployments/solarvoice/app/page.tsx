@@ -4,410 +4,522 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { 
-  Building2, 
-  Factory, 
-  Zap, 
-  DollarSign, 
-  Clock, 
-  Star,
-  Play,
-  ArrowRight,
-  Users,
+  Wrench,
+  Clock,
+  Phone,
+  MapPin,
+  ChevronRight,
+  Truck,
   Shield,
-  Award,
-  TrendingUp
+  Calculator
 } from "lucide-react"
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-primary/10 to-background">
-        <div className="container mx-auto px-4 py-24 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-6">
-              <Badge variant="secondary" className="px-4 py-2 text-sm font-medium">
-                🚀 Deploy AI Agents in 30 Seconds • Fortune 500 Trusted
-              </Badge>
+    <main className="flex min-h-screen flex-col bg-white">
+      {/* Top Bar - Industrial Style */}
+      <div className="bg-rental-darkgray text-white py-2">
+        <div className="container mx-auto px-4 flex justify-between items-center text-sm">
+          <div className="flex items-center gap-6">
+            <span className="flex items-center gap-2">
+              <Phone className="h-4 w-4" />
+              24/7 Support: 1-800-AI-SOLAR
+            </span>
+            <span className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Nationwide Coverage
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <a href="/portal" className="hover:text-rental-yellow">Fleet Portal</a>
+            <a href="/support" className="hover:text-rental-yellow">Support</a>
+          </div>
+        </div>
+      </div>
+
+      {/* Header - Equipment Rental Style */}
+      <header className="bg-white border-b-4 border-rental-orange sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="bg-rental-orange text-white px-3 py-2 font-bold text-2xl">
+                SOLARVOICE
+              </div>
+              <span className="text-rental-darkgray font-semibold">
+                AI Equipment Rentals
+              </span>
             </div>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              <span className="block">Enterprise AI Agent</span>
-              <span className="block text-primary">Rental Marketplace</span>
-            </h1>
-            <p className="mx-auto mt-6 max-w-4xl text-base text-muted-foreground sm:text-lg md:text-xl">
-              Professional AI agent deployment platform for <strong>Commercial, C&I, Industrial & Utility-Scale</strong> solar construction projects. 
-              Access specialized expertise instantly for $50K+ installations with flexible financing options.
-            </p>
-            <div className="mx-auto mt-10 max-w-2xl space-y-6">
-              <div className="flex gap-4 justify-center">
-                <Button size="lg" className="px-8 py-4 text-lg">
-                  <Play className="mr-2 h-5 w-5" />
-                  Explore AI Specialists
-                </Button>
-                <Button size="lg" variant="outline" className="px-8 py-4 text-lg">
-                  <Clock className="mr-2 h-5 w-5" />
-                  30-Second Demo
+            <nav className="hidden md:flex items-center gap-8">
+              <a href="/catalog" className="text-rental-darkgray hover:text-rental-orange font-semibold">
+                Equipment Catalog
+              </a>
+              <a href="/rates" className="text-rental-darkgray hover:text-rental-orange font-semibold">
+                Rental Rates
+              </a>
+              <a href="/rentals" className="text-rental-darkgray hover:text-rental-orange font-semibold">
+                My Rentals
+              </a>
+              <Button className="bg-rental-orange hover:bg-rental-yellow text-white font-bold">
+                Get Quote
+              </Button>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section - Industrial Style */}
+      <section className="bg-rental-lightgray py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-5xl font-bold text-rental-darkgray mb-4">
+                AI EQUIPMENT RENTALS
+              </h1>
+              <p className="text-2xl text-rental-gray mb-2">
+                Solar Construction Intelligence On-Demand
+              </p>
+              <div className="flex items-center justify-center gap-8 mt-6 text-rental-darkgray">
+                <span className="flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-rental-orange" />
+                  No Contracts
+                </span>
+                <span className="flex items-center gap-2">
+                  <Clock className="h-5 w-5 text-rental-orange" />
+                  Deploy in Minutes
+                </span>
+                <span className="flex items-center gap-2">
+                  <Truck className="h-5 w-5 text-rental-orange" />
+                  24/7 Support
+                </span>
+              </div>
+            </div>
+
+            {/* Search Bar */}
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <div className="flex gap-4">
+                <Input
+                  placeholder="What type of solar project are you working on?"
+                  className="flex-1 text-lg border-2 border-rental-gray focus:border-rental-orange"
+                />
+                <Button className="bg-rental-orange hover:bg-rental-yellow text-white font-bold px-8">
+                  Search Equipment
                 </Button>
               </div>
-              <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4" />
-                  <span>$0.99 - $299.99 per deployment</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  <span>Flexible financing available</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Award className="h-4 w-4" />
-                  <span>Enterprise security certified</span>
-                </div>
+              <div className="flex gap-4 mt-4">
+                <button className="text-rental-orange hover:underline">Commercial (50kW-2MW)</button>
+                <button className="text-rental-orange hover:underline">Utility-Scale (10MW+)</button>
+                <button className="text-rental-orange hover:underline">Performance Analytics</button>
+                <button className="text-rental-orange hover:underline">All Equipment</button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-24 bg-muted/50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Enterprise AI Agent Marketplace
+      {/* Equipment Catalog Section */}
+      <section className="py-12">
+        <div className="container mx-auto px-4">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-rental-darkgray mb-2">
+              Available AI Equipment
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Professional-grade AI specialists for Commercial, C&I, Industrial & Utility-Scale solar projects
+            <p className="text-rental-gray">
+              5 Specialist Models Ready for Immediate Deployment
             </p>
           </div>
-          
+
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {/* TITAN Agent - Solar Construction Specialist */}
-            <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
+            {/* Equipment Card 1 - Commercial Project Manager */}
+            <Card className="border-2 hover:border-rental-orange transition-colors">
               <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
-                      <Building2 className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">TITAN Agent</CardTitle>
-                      <Badge variant="secondary" className="text-xs">Commercial Specialist</Badge>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-primary">$149.99</p>
-                    <p className="text-xs text-muted-foreground">per deployment</p>
-                  </div>
-                </div>
-                <CardDescription>
-                  Advanced project management for commercial and industrial solar installations
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <span className="font-medium">4.9/5</span>
-                    <span className="text-muted-foreground">(2,847 projects)</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Streamlines large-scale commercial solar projects with automated compliance tracking and optimized scheduling.
-                  </p>
-                  <Button className="w-full group-hover:bg-primary/90" size="sm">
-                    <Play className="mr-2 h-4 w-4" />
-                    Deploy in 30s
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* APOLLO Agent - Customer Success */}
-            <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                      <Users className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">APOLLO Agent</CardTitle>
-                      <Badge variant="secondary" className="text-xs">Customer Success</Badge>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-primary">$89.99</p>
-                    <p className="text-xs text-muted-foreground">per deployment</p>
-                  </div>
-                </div>
-                <CardDescription>
-                  Strategic customer success management for utility-scale solar installations
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <span className="font-medium">4.8/5</span>
-                    <span className="text-muted-foreground">(1,923 deployments)</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Delivers exceptional customer experiences with streamlined onboarding and comprehensive project oversight.
-                  </p>
-                  <Button className="w-full group-hover:bg-primary/90" size="sm">
-                    <Play className="mr-2 h-4 w-4" />
-                    Deploy in 30s
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* NOVA Agent - Analytics Intelligence */}
-            <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
-                      <TrendingUp className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">NOVA Agent</CardTitle>
-                      <Badge variant="secondary" className="text-xs">Analytics AI</Badge>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-primary">$199.99</p>
-                    <p className="text-xs text-muted-foreground">per deployment</p>
-                  </div>
-                </div>
-                <CardDescription>
-                  Comprehensive analytics and performance optimization for industrial-scale solar systems
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <span className="font-medium">5.0/5</span>
-                    <span className="text-muted-foreground">(756 deployments)</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Advanced analytics and predictive insights for utility-scale installations with comprehensive ROI tracking.
-                  </p>
-                  <Button className="w-full group-hover:bg-primary/90" size="sm">
-                    <Play className="mr-2 h-4 w-4" />
-                    Deploy in 30s
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* HERMES Agent - Sales Intelligence */}
-            <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-                      <Zap className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">HERMES Agent</CardTitle>
-                      <Badge variant="secondary" className="text-xs">Sales Intelligence</Badge>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-primary">$129.99</p>
-                    <p className="text-xs text-muted-foreground">per deployment</p>
-                  </div>
-                </div>
-                <CardDescription>
-                  Strategic sales optimization for enterprise commercial solar projects
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <span className="font-medium">4.9/5</span>
-                    <span className="text-muted-foreground">(1,456 deals)</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Streamlines complex sales processes with intelligent proposal automation and financial modeling.
-                  </p>
-                  <Button className="w-full group-hover:bg-primary/90" size="sm">
-                    <Play className="mr-2 h-4 w-4" />
-                    Deploy in 30s
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* ATLAS Agent - Project Management */}
-            <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center">
-                      <Factory className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">ATLAS Agent</CardTitle>
-                      <Badge variant="secondary" className="text-xs">Project Management</Badge>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-primary">$179.99</p>
-                    <p className="text-xs text-muted-foreground">per deployment</p>
-                  </div>
-                </div>
-                <CardDescription>
-                  Comprehensive project coordination for utility-scale and megawatt solar installations
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <span className="font-medium">4.8/5</span>
-                    <span className="text-muted-foreground">(892 projects)</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Manages complex utility-scale installations with timeline optimization and risk mitigation.
-                  </p>
-                  <Button className="w-full group-hover:bg-primary/90" size="sm">
-                    <Play className="mr-2 h-4 w-4" />
-                    Deploy in 30s
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* View All Agents Card */}
-            <Card className="group hover:shadow-lg transition-all duration-300 border-2 border-dashed border-primary/30 hover:border-primary flex items-center justify-center">
-              <CardContent className="text-center py-12">
-                <div className="space-y-4">
-                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto group-hover:bg-primary/20 transition-colors">
-                    <ArrowRight className="h-8 w-8 text-primary" />
-                  </div>
+                <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-lg font-semibold">View All Agents</h3>
-                    <p className="text-sm text-muted-foreground">50+ specialized AI agents available</p>
+                    <div className="text-rental-gray text-sm font-semibold mb-1">
+                      MODEL CPM-24
+                    </div>
+                    <CardTitle className="text-xl text-rental-darkgray">
+                      Commercial Project Manager
+                    </CardTitle>
+                    <Badge variant="outline" className="mt-2 border-rental-orange text-rental-orange">
+                      Available Now
+                    </Badge>
                   </div>
-                  <Button variant="outline" className="w-full">
-                    Browse Marketplace
-                  </Button>
+                  <Wrench className="h-8 w-8 text-rental-orange" />
                 </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-rental-gray">
+                    Specialized AI for managing commercial and industrial solar installations (50kW-2MW systems)
+                  </p>
+                  
+                  <div className="bg-rental-lightgray p-3 rounded">
+                    <div className="text-sm font-semibold text-rental-darkgray mb-2">
+                      Rental Rates:
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>Hourly: <span className="font-bold">$4.99</span></div>
+                      <div>Daily: <span className="font-bold">$99</span></div>
+                      <div>Weekly: <span className="font-bold">$499</span></div>
+                      <div>Monthly: <span className="font-bold">$1,499</span></div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button className="flex-1 bg-rental-orange hover:bg-rental-yellow text-white font-bold">
+                      Add to Cart
+                    </Button>
+                    <Button variant="outline" className="border-2 border-rental-orange text-rental-orange hover:bg-rental-orange hover:text-white">
+                      Get Quote
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Equipment Card 2 - Customer Success */}
+            <Card className="border-2 hover:border-rental-orange transition-colors">
+              <CardHeader className="pb-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="text-rental-gray text-sm font-semibold mb-1">
+                      MODEL CSS-24
+                    </div>
+                    <CardTitle className="text-xl text-rental-darkgray">
+                      Customer Success Specialist
+                    </CardTitle>
+                    <Badge variant="outline" className="mt-2 border-rental-orange text-rental-orange">
+                      Available Now
+                    </Badge>
+                  </div>
+                  <Wrench className="h-8 w-8 text-rental-orange" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-rental-gray">
+                    Dedicated AI for managing solar customer relationships and post-installation support
+                  </p>
+                  
+                  <div className="bg-rental-lightgray p-3 rounded">
+                    <div className="text-sm font-semibold text-rental-darkgray mb-2">
+                      Rental Rates:
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>Hourly: <span className="font-bold">$3.99</span></div>
+                      <div>Daily: <span className="font-bold">$79</span></div>
+                      <div>Weekly: <span className="font-bold">$399</span></div>
+                      <div>Monthly: <span className="font-bold">$1,199</span></div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button className="flex-1 bg-rental-orange hover:bg-rental-yellow text-white font-bold">
+                      Add to Cart
+                    </Button>
+                    <Button variant="outline" className="border-2 border-rental-orange text-rental-orange hover:bg-rental-orange hover:text-white">
+                      Get Quote
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Equipment Card 3 - Performance Analytics */}
+            <Card className="border-2 hover:border-rental-orange transition-colors">
+              <CardHeader className="pb-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="text-rental-gray text-sm font-semibold mb-1">
+                      MODEL PAS-24
+                    </div>
+                    <CardTitle className="text-xl text-rental-darkgray">
+                      Performance Analytics
+                    </CardTitle>
+                    <Badge variant="outline" className="mt-2 border-rental-orange text-rental-orange">
+                      Available Now
+                    </Badge>
+                  </div>
+                  <Wrench className="h-8 w-8 text-rental-orange" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-rental-gray">
+                    Advanced AI for solar energy production analysis, optimization, and predictive maintenance
+                  </p>
+                  
+                  <div className="bg-rental-lightgray p-3 rounded">
+                    <div className="text-sm font-semibold text-rental-darkgray mb-2">
+                      Rental Rates:
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>Hourly: <span className="font-bold">$5.99</span></div>
+                      <div>Daily: <span className="font-bold">$119</span></div>
+                      <div>Weekly: <span className="font-bold">$599</span></div>
+                      <div>Monthly: <span className="font-bold">$1,799</span></div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button className="flex-1 bg-rental-orange hover:bg-rental-yellow text-white font-bold">
+                      Add to Cart
+                    </Button>
+                    <Button variant="outline" className="border-2 border-rental-orange text-rental-orange hover:bg-rental-orange hover:text-white">
+                      Get Quote
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Equipment Card 4 - Sales & Lead Generation */}
+            <Card className="border-2 hover:border-rental-orange transition-colors">
+              <CardHeader className="pb-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="text-rental-gray text-sm font-semibold mb-1">
+                      MODEL SLG-24
+                    </div>
+                    <CardTitle className="text-xl text-rental-darkgray">
+                      Sales & Lead Generation
+                    </CardTitle>
+                    <Badge variant="outline" className="mt-2 border-rental-orange text-rental-orange">
+                      Available Now
+                    </Badge>
+                  </div>
+                  <Wrench className="h-8 w-8 text-rental-orange" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-rental-gray">
+                    AI-powered sales assistant specialized in solar energy system sales and lead conversion
+                  </p>
+                  
+                  <div className="bg-rental-lightgray p-3 rounded">
+                    <div className="text-sm font-semibold text-rental-darkgray mb-2">
+                      Rental Rates:
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>Hourly: <span className="font-bold">$4.49</span></div>
+                      <div>Daily: <span className="font-bold">$89</span></div>
+                      <div>Weekly: <span className="font-bold">$449</span></div>
+                      <div>Monthly: <span className="font-bold">$1,349</span></div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button className="flex-1 bg-rental-orange hover:bg-rental-yellow text-white font-bold">
+                      Add to Cart
+                    </Button>
+                    <Button variant="outline" className="border-2 border-rental-orange text-rental-orange hover:bg-rental-orange hover:text-white">
+                      Get Quote
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Equipment Card 5 - Utility Integration */}
+            <Card className="border-2 hover:border-rental-orange transition-colors">
+              <CardHeader className="pb-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="text-rental-gray text-sm font-semibold mb-1">
+                      MODEL UIC-24
+                    </div>
+                    <CardTitle className="text-xl text-rental-darkgray">
+                      Utility Integration
+                    </CardTitle>
+                    <Badge variant="outline" className="mt-2 border-rental-orange text-rental-orange">
+                      Available Now
+                    </Badge>
+                  </div>
+                  <Wrench className="h-8 w-8 text-rental-orange" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-rental-gray">
+                    Enterprise AI for coordinating massive solar installations (10MW+ utility and grid-scale projects)
+                  </p>
+                  
+                  <div className="bg-rental-lightgray p-3 rounded">
+                    <div className="text-sm font-semibold text-rental-darkgray mb-2">
+                      Rental Rates:
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>Hourly: <span className="font-bold">$5.49</span></div>
+                      <div>Daily: <span className="font-bold">$109</span></div>
+                      <div>Weekly: <span className="font-bold">$549</span></div>
+                      <div>Monthly: <span className="font-bold">$1,649</span></div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button className="flex-1 bg-rental-orange hover:bg-rental-yellow text-white font-bold">
+                      Add to Cart
+                    </Button>
+                    <Button variant="outline" className="border-2 border-rental-orange text-rental-orange hover:bg-rental-orange hover:text-white">
+                      Get Quote
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Browse All Card */}
+            <Card className="border-2 border-dashed border-rental-gray hover:border-rental-orange transition-colors">
+              <CardContent className="flex flex-col items-center justify-center h-full min-h-[400px]">
+                <Calculator className="h-16 w-16 text-rental-orange mb-4" />
+                <h3 className="text-xl font-bold text-rental-darkgray mb-2">
+                  Need a Custom Solution?
+                </h3>
+                <p className="text-sm text-rental-gray text-center mb-6">
+                  Contact us for enterprise rates and custom AI equipment packages
+                </p>
+                <Button className="bg-rental-orange hover:bg-rental-yellow text-white font-bold">
+                  Request Custom Quote
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
-      {/* Enterprise CTA Section */}
-      <section className="py-24 bg-gradient-to-b from-primary/5 to-background">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
-              Ready to Scale Your Solar Operations?
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Join industry leaders leveraging AI specialists for commercial, C&I, and utility-scale solar projects
-            </p>
-          </div>
-          
-          <div className="grid gap-8 md:grid-cols-2 max-w-6xl mx-auto">
-            {/* Enterprise Onboarding */}
-            <Card className="border-2 border-primary/20">
-              <CardHeader className="text-center">
-                <CardTitle className="text-xl">Enterprise Deployment</CardTitle>
-                <CardDescription>
-                  For commercial solar contractors and Fortune 500 companies
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form className="space-y-4">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="first-name">First name</Label>
-                      <Input id="first-name" placeholder="John" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="last-name">Last name</Label>
-                      <Input id="last-name" placeholder="Smith" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Business Email</Label>
-                    <Input id="email" placeholder="john@company.com" type="email" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="company">Company Name *</Label>
-                    <Input id="company" placeholder="Solar Construction Corp" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="project-size">Typical Project Size</Label>
-                    <select className="w-full px-3 py-2 text-sm ring-offset-background bg-background border border-input rounded-md">
-                      <option>$50K - $250K (Commercial)</option>
-                      <option>$250K - $1M (C&I)</option>
-                      <option>$1M - $10M (Industrial)</option>
-                      <option>$10M+ (Utility-Scale)</option>
-                    </select>
-                  </div>
-                  <Button className="w-full" size="lg">
-                    <Play className="mr-2 h-4 w-4" />
-                    Deploy First Agent (30s)
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-
-            {/* Instant Demo */}
-            <Card className="border-2 border-secondary/20">
-              <CardHeader className="text-center">
-                <CardTitle className="text-xl">Live Demonstration</CardTitle>
-                <CardDescription>
-                  Experience enterprise AI agent deployment
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="text-center space-y-6">
-                <div className="space-y-4">
-                  <div className="h-32 w-full bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg flex items-center justify-center">
-                    <Play className="h-12 w-12 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">TITAN Agent: Commercial Solar Specialist</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Discover how enterprise clients deploy specialized AI systems for large-scale solar construction projects with immediate access
-                    </p>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <Button className="w-full" size="lg" variant="outline">
-                    <Play className="mr-2 h-4 w-4" />
-                    Watch Demo (2 min)
-                  </Button>
-                  <Button className="w-full" variant="ghost">
-                    View All Specialists
-                  </Button>
-                </div>
-                <div className="pt-4 border-t">
-                  <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Shield className="h-3 w-3" />
-                      <span>Financing Available</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Award className="h-3 w-3" />
-                      <span>SOC2 Certified</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+      {/* How It Works Section */}
+      <section className="bg-rental-lightgray py-12">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-rental-darkgray mb-8 text-center">
+            How AI Equipment Rental Works
+          </h2>
+          <div className="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            <div className="text-center">
+              <div className="bg-rental-orange text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                1
+              </div>
+              <h3 className="font-bold text-rental-darkgray mb-2">Select Equipment</h3>
+              <p className="text-sm text-rental-gray">
+                Choose the AI model that fits your solar project needs
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="bg-rental-orange text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                2
+              </div>
+              <h3 className="font-bold text-rental-darkgray mb-2">Choose Duration</h3>
+              <p className="text-sm text-rental-gray">
+                Rent by the hour, day, week, or month - no contracts
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="bg-rental-orange text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                3
+              </div>
+              <h3 className="font-bold text-rental-darkgray mb-2">Deploy Instantly</h3>
+              <p className="text-sm text-rental-gray">
+                AI equipment deploys in minutes to your project
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="bg-rental-orange text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                4
+              </div>
+              <h3 className="font-bold text-rental-darkgray mb-2">24/7 Support</h3>
+              <p className="text-sm text-rental-gray">
+                Technical support available around the clock
+              </p>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* CTA Section */}
+      <section className="py-12 bg-rental-darkgray text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">
+            Ready to Rent AI Equipment for Your Solar Project?
+          </h2>
+          <p className="text-xl mb-8">
+            Join contractors using AI to complete projects faster and more efficiently
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button className="bg-rental-orange hover:bg-rental-yellow text-white font-bold text-lg px-8 py-3">
+              Browse Equipment Catalog
+            </Button>
+            <Button variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-rental-darkgray font-bold text-lg px-8 py-3">
+              Get Enterprise Quote
+            </Button>
+          </div>
+          <div className="mt-8 flex items-center justify-center gap-8">
+            <span className="flex items-center gap-2">
+              <Phone className="h-5 w-5" />
+              1-800-AI-SOLAR
+            </span>
+            <span className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              24/7 Support
+            </span>
+            <span className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              No Contracts Required
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-white border-t-4 border-rental-orange py-8">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="font-bold text-rental-darkgray mb-4">Equipment Categories</h3>
+              <ul className="space-y-2 text-sm text-rental-gray">
+                <li><a href="#" className="hover:text-rental-orange">Commercial Solar</a></li>
+                <li><a href="#" className="hover:text-rental-orange">Utility-Scale</a></li>
+                <li><a href="#" className="hover:text-rental-orange">Performance Analytics</a></li>
+                <li><a href="#" className="hover:text-rental-orange">Customer Success</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold text-rental-darkgray mb-4">Rental Information</h3>
+              <ul className="space-y-2 text-sm text-rental-gray">
+                <li><a href="#" className="hover:text-rental-orange">Rental Rates</a></li>
+                <li><a href="#" className="hover:text-rental-orange">Terms & Conditions</a></li>
+                <li><a href="#" className="hover:text-rental-orange">Fleet Portal</a></li>
+                <li><a href="#" className="hover:text-rental-orange">Support</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold text-rental-darkgray mb-4">Company</h3>
+              <ul className="space-y-2 text-sm text-rental-gray">
+                <li><a href="#" className="hover:text-rental-orange">About Us</a></li>
+                <li><a href="#" className="hover:text-rental-orange">Contact</a></li>
+                <li><a href="#" className="hover:text-rental-orange">Careers</a></li>
+                <li><a href="#" className="hover:text-rental-orange">Locations</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold text-rental-darkgray mb-4">Contact Us</h3>
+              <p className="text-sm text-rental-gray mb-2">
+                24/7 Support: 1-800-AI-SOLAR
+              </p>
+              <p className="text-sm text-rental-gray mb-2">
+                sales@solarvoice.ai
+              </p>
+              <p className="text-sm text-rental-gray">
+                Enterprise quotes available
+              </p>
+            </div>
+          </div>
+          <div className="mt-8 pt-8 border-t border-rental-gray text-center text-sm text-rental-gray">
+            © 2024 SolarVoice AI Equipment Rentals. All rights reserved. | Private Beta
+          </div>
+        </div>
+      </footer>
     </main>
   )
 }

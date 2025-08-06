@@ -24,6 +24,14 @@ const config: Config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        // Industrial rental colors
+        rental: {
+          orange: "#FF6900",
+          yellow: "#FCB900",
+          darkgray: "#232323",
+          gray: "#4A4A4A",
+          lightgray: "#F5F5F5",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
