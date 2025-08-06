@@ -1,4 +1,5 @@
-import { ElevenLabsApi, ElevenLabs } from '@elevenlabs/elevenlabs-js'
+// SECURE: No direct ElevenLabs imports or API keys
+// All voice operations go through our secure API endpoints
 
 // Professional voice IDs for each specialist
 export const AGENT_VOICES = {
@@ -12,22 +13,12 @@ export const AGENT_VOICES = {
 export type AgentId = keyof typeof AGENT_VOICES
 
 class ElevenLabsService {
-  private client: ElevenLabsApi
   private audioContext: AudioContext | null = null
+  private apiEndpoint: string = '/api/voice'
 
   constructor() {
-    const apiKey = process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY
-    
-    if (!apiKey) {
-      console.warn('⚠️ ElevenLabs API key not configured. Voice synthesis will fall back to browser TTS.')
-      // Create a dummy client that won't be used but prevents constructor errors
-      this.client = {} as ElevenLabsApi
-      return
-    }
-    
-    this.client = new ElevenLabs({
-      apiKey: apiKey
-    })
+    // No API key needed - all calls go through our secure endpoints
+    console.log('🔒 ElevenLabs service initialized with secure API endpoints')
   }
 
   private async initAudioContext() {
@@ -44,26 +35,34 @@ class ElevenLabsService {
 
   async textToSpeech(text: string, agentId?: AgentId): Promise<void> {
     try {
-      // Check if client is properly initialized
-      if (!this.client || !this.client.generate) {
-        console.log('ElevenLabs not configured, using browser TTS')
-        this.fallbackTTS(text)
-        return
-      }
-      
       const voiceId = agentId ? AGENT_VOICES[agentId] : AGENT_VOICES['commercial-manager']
       
-      console.log(`🎤 ElevenLabs TTS: "${text}" with voice ${voiceId}`)
+      console.log(`🎤 Secure TTS: "${text}" with voice ${voiceId}`)
       
-      const audio = await this.client.generate({
-        voice: voiceId,
-        text: text,
-        model_id: 'eleven_monolingual_v1'
+      // Call our secure API endpoint
+      const response = await fetch(`${this.apiEndpoint}/synthesize`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,
+          voiceId,
+          modelId: 'eleven_turbo_v2_5', // Fast bilingual model
+        }),
       })
 
-      await this.playAudio(audio)
+      if (!response.ok) {
+        throw new Error(`TTS API error: ${response.status}`)
+      }
+
+      // Get audio data from response
+      const audioData = await response.arrayBuffer()
+      
+      // Play the audio
+      await this.playAudio(audioData)
     } catch (error) {
-      console.error('ElevenLabs TTS Error:', error)
+      console.error('TTS Error:', error)
       // Fallback to browser TTS
       this.fallbackTTS(text)
     }
@@ -128,31 +127,64 @@ class ElevenLabsService {
 
   async getAvailableVoices() {
     try {
-      if (!this.client || !this.client.voices) {
-        console.warn('ElevenLabs client not initialized')
+      // Call our secure API endpoint
+      const response = await fetch(`${this.apiEndpoint}/synthesize`, {
+        method: 'GET',
+      })
+      
+      if (!response.ok) {
+        console.error('Failed to fetch voices')
         return []
       }
-      const voices = await this.client.voices.getAll()
-      return voices.voices
+      
+      const data = await response.json()
+      return data.voices || []
     } catch (error) {
       console.error('Error fetching voices:', error)
       return []
     }
   }
 
-  // Test function to verify ElevenLabs connection
+  // Test function to verify voice service is available
   async testConnection(): Promise<boolean> {
     try {
-      if (!this.client || !this.client.voices) {
-        console.warn('ElevenLabs client not initialized - API key missing')
+      const response = await fetch(`${this.apiEndpoint}/synthesize`, {
+        method: 'GET',
+      })
+      
+      if (response.ok) {
+        console.log('✅ Voice service connection successful')
+        return true
+      } else {
+        console.error('❌ Voice service unavailable:', response.status)
         return false
       }
-      await this.client.voices.getAll()
-      console.log('✅ ElevenLabs connection successful')
-      return true
     } catch (error) {
-      console.error('❌ ElevenLabs connection failed:', error)
+      console.error('❌ Voice service connection failed:', error)
       return false
+    }
+  }
+
+  // New method for transcription
+  async transcribeAudio(audioFile: File, language: string = 'auto'): Promise<any> {
+    try {
+      const formData = new FormData()
+      formData.append('audio', audioFile)
+      formData.append('language', language)
+      
+      const response = await fetch(`${this.apiEndpoint}/transcribe`, {
+        method: 'POST',
+        body: formData,
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Transcription API error: ${response.status}`)
+      }
+      
+      return await response.json()
+    } catch (error) {
+      console.error('Transcription error:', error)
+      throw error
     }
   }
 }
