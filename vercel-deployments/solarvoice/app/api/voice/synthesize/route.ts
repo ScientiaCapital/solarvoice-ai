@@ -75,12 +75,16 @@ export async function POST(request: NextRequest) {
     // Get audio data
     const audioData = await response.arrayBuffer()
 
-    // Return audio to client
+    // Return audio to client with CORS headers
     return new NextResponse(audioData, {
       status: 200,
       headers: {
         'Content-Type': 'audio/mpeg',
         'Content-Length': audioData.byteLength.toString(),
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Cache-Control': 'no-cache',
       },
     })
 
@@ -126,7 +130,13 @@ export async function GET(request: NextRequest) {
       labels: voice.labels,
     }))
 
-    return NextResponse.json({ voices })
+    return NextResponse.json({ voices }, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      }
+    })
 
   } catch (error) {
     console.error('Error fetching voices:', error)

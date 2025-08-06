@@ -13,6 +13,10 @@ export function middleware(request: NextRequest) {
   // Add security headers
   const response = NextResponse.next()
   
+  // Define paths that need voice/microphone access
+  const voiceEnabledPaths = ['/dashboard/agents', '/voice-test', '/conversation', '/pricing']
+  const isVoiceEnabled = voiceEnabledPaths.some(path => pathname.startsWith(path))
+  
   // Security headers
   response.headers.set('X-DNS-Prefetch-Control', 'on')
   response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
@@ -20,7 +24,13 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')
   response.headers.set('X-XSS-Protection', '1; mode=block')
   response.headers.set('Referrer-Policy', 'origin-when-cross-origin')
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+  
+  // Selectively enable microphone access for voice-enabled pages
+  const permissionsPolicy = isVoiceEnabled 
+    ? 'camera=(), microphone=(self), geolocation=()'  // Allow microphone on voice pages
+    : 'camera=(), microphone=(), geolocation=()'       // Block elsewhere for security
+    
+  response.headers.set('Permissions-Policy', permissionsPolicy)
   
   // MVP: DISABLE AUTH - Allow all access to dashboard
   // TODO: Re-enable authentication after MVP testing

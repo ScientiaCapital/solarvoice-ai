@@ -336,7 +336,7 @@ function VoiceTestPage() {
   // Toggle listening
   const toggleListening = async () => {
     if (!recognition) {
-      setError('Speech recognition not supported in this browser')
+      setError('Speech recognition not supported in this browser. Please use Chrome, Edge, or Safari.')
       return
     }
     
@@ -345,19 +345,40 @@ function VoiceTestPage() {
         recognition.stop()
         setIsListening(false)
       } else {
-        // Request microphone permission
+        // Request microphone permission with better error handling
         if (typeof window !== 'undefined' && navigator.mediaDevices) {
-          await navigator.mediaDevices.getUserMedia({ audio: true })
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            // Release the stream immediately after permission check
+            stream.getTracks().forEach(track => track.stop())
+          } catch (permissionError: any) {
+            console.error('Microphone permission error:', permissionError)
+            
+            // Provide specific error messages based on error type
+            if (permissionError.name === 'NotAllowedError') {
+              setError('🎤 Microphone access denied. Please click the lock icon in your browser address bar and allow microphone access, then refresh the page.')
+            } else if (permissionError.name === 'NotFoundError') {
+              setError('🎤 No microphone found. Please connect a microphone and refresh the page.')
+            } else if (permissionError.name === 'NotReadableError') {
+              setError('🎤 Microphone is being used by another application. Please close other apps using the microphone.')
+            } else if (permissionError.name === 'SecurityError') {
+              setError('🔒 Security error: This page must be served over HTTPS to access the microphone.')
+            } else {
+              setError(`🎤 Microphone error: ${permissionError.message}. Please check your browser settings.`)
+            }
+            return
+          }
         }
+        
         recognition.lang = currentLanguage === 'en' ? 'en-US' : 'es-ES'
         recognition.start()
         setIsListening(true)
         setTranscript('')
         setConfidence(0)
       }
-    } catch (error) {
-      console.error('Microphone access error:', error)
-      setError('Microphone access denied. Please allow microphone access to use voice features.')
+    } catch (error: any) {
+      console.error('Speech recognition error:', error)
+      setError(`Voice recognition error: ${error.message}. Please try again.`)
     }
   }
 
