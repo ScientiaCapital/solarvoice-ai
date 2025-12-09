@@ -2,7 +2,17 @@
 
 **Last Updated**: 2025-12-09
 **Current Branch**: main
-**Repository**: https://github.com/ScientiaCapital/solarvoice_ai
+**Repository**: https://github.com/ScientiaCapital/solarvoice-ai
+
+---
+
+## Deployment Status
+
+| Environment | URL | Status |
+|-------------|-----|--------|
+| Production | https://solarvoice-ai.vercel.app | LIVE |
+| Preview | https://solarvoice-ai-scientia-capital.vercel.app | LIVE |
+| Local Dev | http://localhost:3000 | Ready |
 
 ---
 
@@ -10,6 +20,7 @@
 
 | Area | Status | Notes |
 |------|--------|-------|
+| Vercel Deployment | LIVE | Production deployed 2025-12-09 |
 | TypeScript Compilation | 48 Errors | Pre-existing from MVP phase |
 | Build | PASSING | Production build succeeds |
 | Database | Not Connected | User to configure DATABASE_URL in .env |
@@ -24,7 +35,7 @@
 
 | Layer | Technology | Version |
 |-------|------------|---------|
-| Frontend | Next.js + React | 15.3.5 / 19 |
+| Frontend | Next.js + React | 15.4.8 / 18.3.1 |
 | Styling | Tailwind CSS | 3.4.10 |
 | State | Zustand | Latest |
 | ORM | Prisma | 6.13 |
@@ -122,22 +133,26 @@ vercel-deployments/solarvoice/
 **Security Audit Results:**
 - Secrets: 0 hardcoded (PASS)
 - .env tracked: 0 files (PASS)
-- CVEs: 1 critical (Next.js 15.3.5 → needs 15.5.7+), 4 high
+- CVEs: 0 critical, 4 high (playwright, jws - dev deps)
 - API Auth: Some routes lack explicit auth (acceptable for MVP)
 - Build: PASSING
+
+**Deployment Notes:**
+- Upgraded Next.js 15.3.5 → 15.4.8 to fix CVE-2025-66478
+- Kept React 18.3.1 (not 19) for Radix UI compatibility
+- Production deployed to solarvoice-ai.vercel.app
 
 **Known Issues:**
 - 48 TypeScript errors (pre-existing, not from this sprint)
 - Jest test suite has polyfill configuration issue
-- Next.js CVE requires upgrade to 15.5.7+
 
 ---
 
 ## Tomorrow's Focus
 
-1. [ ] Evaluate solarvoice-platform repo for salvageable code
-2. [ ] Fix 48 TypeScript errors (target: 0 errors)
-3. [ ] Upgrade Next.js to 15.5.7+ (fix CVE)
+1. [ ] Fix 48 TypeScript errors (target: 0 errors) - See plan file
+2. [ ] Evaluate solarvoice-platform repo for salvageable code
+3. [ ] Connect database (Supabase)
 4. [ ] Fix Jest polyfill configuration
 
 ---

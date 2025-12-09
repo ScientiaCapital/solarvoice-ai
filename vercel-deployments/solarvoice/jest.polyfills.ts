@@ -3,20 +3,22 @@
  * Provides necessary globals for Next.js API route testing
  */
 
-// First, polyfill TextEncoder/TextDecoder which undici needs
+// Polyfill TextEncoder/TextDecoder BEFORE any other imports
 import { TextEncoder, TextDecoder } from 'util'
-global.TextEncoder = TextEncoder
-global.TextDecoder = TextDecoder as any
 
-// Then import undici which depends on TextEncoder
-import { fetch, FormData, Headers, Request, Response } from 'undici'
+// Must set these before importing anything that uses them
+Object.defineProperty(globalThis, 'TextEncoder', {
+  value: TextEncoder,
+  writable: true,
+})
 
-// Assign fetch API globals
-global.fetch = fetch as any
-global.FormData = FormData as any
-global.Headers = Headers as any
-global.Request = Request as any
-global.Response = Response as any
+Object.defineProperty(globalThis, 'TextDecoder', {
+  value: TextDecoder,
+  writable: true,
+})
+
+// Use whatwg-fetch instead of undici (simpler, less issues with Node globals)
+import 'whatwg-fetch'
 
 // Set test environment variable
 process.env.NODE_ENV = 'test'

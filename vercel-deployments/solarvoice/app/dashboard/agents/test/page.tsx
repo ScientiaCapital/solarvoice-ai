@@ -27,15 +27,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Progress } from '@/components/ui/progress'
 import { VoiceVisualizer } from '@/components/voice/VoiceVisualizer'
-import { elevenlabsService, AGENT_VOICES } from '@/lib/services/elevenlabs'
 
-// Pre-built equipment models with voice configurations
+// Pre-built equipment models
 const EQUIPMENT_MODELS = [
   {
     id: 'commercial-manager',
     name: 'Commercial Manager',
     description: 'Handles large commercial solar projects',
-    voiceId: AGENT_VOICES['commercial-manager'],
+    voiceId: 'commercial-manager',
     category: 'Commercial',
     capabilities: ['permit_checking', 'roi_calculation', 'project_management']
   },
@@ -43,7 +42,7 @@ const EQUIPMENT_MODELS = [
     id: 'customer-success',
     name: 'Customer Success Specialist',
     description: 'Ensures customer satisfaction and project success',
-    voiceId: AGENT_VOICES['customer-success'],
+    voiceId: 'customer-success',
     category: 'Customer Service',
     capabilities: ['customer_support', 'satisfaction_tracking', 'issue_resolution']
   },
@@ -51,7 +50,7 @@ const EQUIPMENT_MODELS = [
     id: 'performance-analyst',
     name: 'Performance Analyst',
     description: 'Analyzes system performance and optimization',
-    voiceId: AGENT_VOICES['performance-analyst'],
+    voiceId: 'performance-analyst',
     category: 'Analytics',
     capabilities: ['performance_analysis', 'optimization', 'reporting']
   },
@@ -59,7 +58,7 @@ const EQUIPMENT_MODELS = [
     id: 'sales-specialist',
     name: 'Sales Specialist',
     description: 'Drives sales and lead conversion',
-    voiceId: AGENT_VOICES['sales-specialist'],
+    voiceId: 'sales-specialist',
     category: 'Sales',
     capabilities: ['lead_qualification', 'proposal_generation', 'closing']
   },
@@ -67,7 +66,7 @@ const EQUIPMENT_MODELS = [
     id: 'utility-coordinator',
     name: 'Utility Coordinator',
     description: 'Manages utility interconnections and regulations',
-    voiceId: AGENT_VOICES['utility-coordinator'],
+    voiceId: 'utility-coordinator',
     category: 'Utility',
     capabilities: ['interconnection', 'regulatory_compliance', 'tariff_analysis']
   },
@@ -75,7 +74,7 @@ const EQUIPMENT_MODELS = [
     id: 'residential-advisor',
     name: 'Residential Advisor',
     description: 'Specializes in residential solar installations',
-    voiceId: 'EXAVITQu4vr4xnSDxMaL',
+    voiceId: 'residential-advisor',
     category: 'Residential',
     capabilities: ['home_assessment', 'financing_options', 'installation_planning']
   },
@@ -83,7 +82,7 @@ const EQUIPMENT_MODELS = [
     id: 'battery-specialist',
     name: 'Battery Storage Specialist',
     description: 'Expert in energy storage solutions',
-    voiceId: 'VR6AewLTigWG4xSOukaG',
+    voiceId: 'battery-specialist',
     category: 'Storage',
     capabilities: ['battery_sizing', 'backup_systems', 'grid_services']
   },
@@ -91,7 +90,7 @@ const EQUIPMENT_MODELS = [
     id: 'compliance-officer',
     name: 'Compliance Officer',
     description: 'Ensures regulatory compliance and safety',
-    voiceId: 'MF3mGyEYCl7XYWbV9V6O',
+    voiceId: 'compliance-officer',
     category: 'Compliance',
     capabilities: ['code_compliance', 'safety_protocols', 'documentation']
   }
@@ -227,20 +226,12 @@ function VoiceTestPage() {
     }
   }, [currentLanguage])
 
-  // Check service availability
+  // Check service availability (browser TTS)
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const checkService = async () => {
-        try {
-          const available = await elevenlabsService.testConnection()
-          setIsServiceAvailable(available)
-        } catch (error) {
-          console.error('Service check failed:', error)
-          setIsServiceAvailable(false)
-        }
-      }
-      
-      checkService()
+      // Check if browser supports speech synthesis
+      const isTTSAvailable = 'speechSynthesis' in window
+      setIsServiceAvailable(isTTSAvailable)
     }
   }, [])
 

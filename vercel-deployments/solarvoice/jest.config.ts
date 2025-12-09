@@ -29,7 +29,7 @@ const config: Config = {
     '!**/coverage/**',
     '!**/*.config.{js,ts}',
   ],
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/', '<rootDir>/e2e/'],
   transformIgnorePatterns: [
     'node_modules/(?!(react-markdown|remark-*|unified|bail|is-plain-obj|trough|vfile|vfile-message|mdast-util-*|micromark|micromark-*|decode-named-character-reference|character-entities|property-information|hast-util-whitespace|space-separated-tokens|comma-separated-tokens|unist-util-*)/)',
   ],

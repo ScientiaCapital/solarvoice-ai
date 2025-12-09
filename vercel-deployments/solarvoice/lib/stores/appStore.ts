@@ -2,7 +2,9 @@
 
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
-import { elevenlabsService, type AgentId } from '@/lib/services/elevenlabs'
+
+// Agent IDs for voice selection
+type AgentId = 'commercial-manager' | 'customer-success' | 'performance-analyst' | 'sales-specialist' | 'utility-coordinator'
 
 // Speech API Types (inline to avoid import issues)
 declare global {
@@ -574,41 +576,34 @@ export const useAppStore = create<AppState>()(
           })
         },
 
-        speakResponse: async (text: string, agentId?: AgentId) => {
-          try {
-            // Use ElevenLabs for professional voice quality
-            get().addNotification({
-              type: 'info',
-              title: 'AI Speaking',
-              message: text
-            })
-            
-            await elevenlabsService.textToSpeech(text, agentId)
-          } catch (error) {
-            console.error('ElevenLabs TTS failed, using fallback:', error)
-            
-            // Fallback to browser TTS if ElevenLabs fails
-            if ('speechSynthesis' in window) {
-              window.speechSynthesis.cancel()
-              
-              const utterance = new SpeechSynthesisUtterance(text)
-              utterance.rate = 0.9
-              utterance.pitch = 1.0
-              utterance.volume = 0.8
-              
-              const voices = window.speechSynthesis.getVoices()
-              const preferredVoice = voices.find(voice => 
-                voice.name.includes('Google') || 
-                voice.name.includes('Enhanced') ||
-                voice.name.includes('Neural')
-              )
-              
-              if (preferredVoice) {
-                utterance.voice = preferredVoice
-              }
-              
-              window.speechSynthesis.speak(utterance)
+        speakResponse: (text: string, _agentId?: AgentId) => {
+          // Browser TTS implementation
+          get().addNotification({
+            type: 'info',
+            title: 'AI Speaking',
+            message: text
+          })
+
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel()
+
+            const utterance = new SpeechSynthesisUtterance(text)
+            utterance.rate = 0.9
+            utterance.pitch = 1.0
+            utterance.volume = 0.8
+
+            const voices = window.speechSynthesis.getVoices()
+            const preferredVoice = voices.find(voice =>
+              voice.name.includes('Google') ||
+              voice.name.includes('Enhanced') ||
+              voice.name.includes('Neural')
+            )
+
+            if (preferredVoice) {
+              utterance.voice = preferredVoice
             }
+
+            window.speechSynthesis.speak(utterance)
           }
         }
       }),

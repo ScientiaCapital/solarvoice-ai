@@ -54,7 +54,6 @@ if (typeof window !== 'undefined') {
 }
 
 // Mock environment variables for testing
-process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY = 'test-api-key'
 process.env.JWT_SECRET = 'test-jwt-secret'
 process.env.JWT_REFRESH_SECRET = 'test-jwt-refresh-secret'
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test'
@@ -184,32 +183,6 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
-}))
-
-// Mock ElevenLabs SDK
-jest.mock('@elevenlabs/elevenlabs-js', () => ({
-  ElevenLabs: jest.fn().mockImplementation(() => ({
-    generate: jest.fn().mockResolvedValue(new ArrayBuffer(8)),
-    voices: {
-      getAll: jest.fn().mockResolvedValue({
-        voices: [
-          { voice_id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam' },
-          { voice_id: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella' },
-          { voice_id: 'VR6AewLTigWG4xSOukaG', name: 'Arnold' },
-          { voice_id: 'ErXwobaYiN019PkySvjV', name: 'Antoni' },
-          { voice_id: 'MF3mGyEYCl7XYWbV9V6O', name: 'Elli' }
-        ]
-      })
-    }
-  })),
-  ElevenLabsApi: jest.fn().mockImplementation(() => ({
-    generate: jest.fn().mockResolvedValue(new ArrayBuffer(8)),
-    voices: {
-      getAll: jest.fn().mockResolvedValue({
-        voices: []
-      })
-    }
-  }))
 }))
 
 // Mock Zustand store with proper cleanup
