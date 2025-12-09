@@ -77,7 +77,14 @@ class ElevenLabsService {
       if (audioData instanceof ArrayBuffer) {
         arrayBuffer = audioData
       } else if (audioData instanceof Uint8Array) {
-        arrayBuffer = audioData.buffer.slice(audioData.byteOffset, audioData.byteOffset + audioData.byteLength)
+        // Handle SharedArrayBuffer case by copying to regular ArrayBuffer
+        const buffer = audioData.buffer
+        if (buffer instanceof SharedArrayBuffer) {
+          arrayBuffer = new ArrayBuffer(audioData.byteLength)
+          new Uint8Array(arrayBuffer).set(audioData)
+        } else {
+          arrayBuffer = buffer.slice(audioData.byteOffset, audioData.byteOffset + audioData.byteLength)
+        }
       } else {
         throw new Error('Unsupported audio format')
       }

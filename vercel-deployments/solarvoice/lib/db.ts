@@ -1,10 +1,9 @@
 import { PrismaClient } from '@prisma/client'
-import { Pool } from '@neondatabase/serverless'
 
-// Declare global type to prevent multiple instances
+// Declare global type to prevent multiple instances in development
 declare global {
+  // eslint-disable-next-line no-var
   var prisma: PrismaClient | undefined
-  var neonPool: Pool | undefined
 }
 
 // Create Prisma client with optimized settings for serverless
@@ -15,29 +14,14 @@ const prismaClientSingleton = () => {
   })
 }
 
-// Create Neon connection pool for direct queries
-const neonPoolSingleton = () => {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not defined')
-  }
-  
-  return new Pool({
-    connectionString: process.env.DATABASE_URL,
-    // Serverless-optimized settings
-    max: 10,
-    idleTimeoutMillis: 20000,
-    connectionTimeoutMillis: 10000,
-  })
-}
-
-// Export singleton instances
+// Export singleton instance
+// Using Supabase PostgreSQL with Prisma - no separate connection pool needed
+// Supabase provides Supavisor for connection pooling via the pooler URL
 export const prisma = globalThis.prisma ?? prismaClientSingleton()
-export const neonPool = globalThis.neonPool ?? neonPoolSingleton()
 
-// Prevent multiple instances in development
+// Prevent multiple instances in development (hot reload)
 if (process.env.NODE_ENV !== 'production') {
   globalThis.prisma = prisma
-  globalThis.neonPool = neonPool
 }
 
 // Helper function to check database connection
@@ -63,5 +47,4 @@ export async function withTransaction<T>(
 // Cleanup function for graceful shutdown
 export async function disconnectDatabase() {
   await prisma.$disconnect()
-  await neonPool.end()
 }

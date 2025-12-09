@@ -82,19 +82,19 @@ export async function POST(request: NextRequest) {
       auth.userId
     )
     
-    // Log voice interaction
+    // Log voice interaction - aligned with Prisma VoiceInteraction schema
+    // Use type assertion for optional duration field
+    const responseDuration = 'duration' in response ? (response as { duration?: number }).duration : undefined
     await prisma.voiceInteraction.create({
       data: {
-        command: validatedData.command,
-        transcription: validatedData.command,
-        response: response.message,
-        emotion: validatedData.emotion,
+        transcript: validatedData.command,
+        language: 'en',
+        intent: commandType,
         confidence: response.confidence || 0.95,
-        duration: response.duration || 1000,
+        durationSeconds: Math.ceil((responseDuration || 1000) / 1000),
+        successful: true,
         userId: auth.userId,
-        projectId: validatedData.context?.projectId,
-        deviceType: validatedData.context?.deviceType,
-        location: validatedData.context?.location || {},
+        projectContext: validatedData.context ? JSON.parse(JSON.stringify(validatedData.context)) : undefined,
       },
     })
     
@@ -201,9 +201,9 @@ async function processCommand(
 }
 
 // Handler functions
-async function handleProjectStatus(command: string, context: any, userId: string) {
+async function handleProjectStatus(_command: string, context: any, _userId: string) {
   const projectId = context?.projectId
-  
+
   if (!projectId) {
     return {
       message: "Which project would you like to check the status for?",
@@ -212,36 +212,19 @@ async function handleProjectStatus(command: string, context: any, userId: string
       actions: ['list_projects'],
     }
   }
-  
-  const project = await prisma.solarProject.findUnique({
-    where: { id: projectId },
-    include: {
-      tasks: {
-        where: { status: { not: 'COMPLETED' } },
-        orderBy: { priority: 'desc' },
-        take: 3,
-      },
-    },
-  })
-  
-  if (!project) {
-    return {
-      message: "I couldn't find that project. Please check the project ID.",
-      confidence: 0.95,
-      data: null,
-      actions: [],
-    }
-  }
-  
+
+  // TODO: Replace with actual project model when implemented
+  // SolarProject model does not exist in current schema
+  // For MVP, return placeholder response
   return {
-    message: `Project ${project.name} is currently in ${project.status} phase. You have ${project.tasks.length} pending tasks.`,
-    confidence: 0.95,
-    data: { project, pendingTasks: project.tasks },
+    message: `Project status check requested for ID: ${projectId}. Project management integration coming soon.`,
+    confidence: 0.85,
+    data: { projectId, status: 'pending_integration' },
     actions: ['show_project_details'],
   }
 }
 
-async function handleScheduleWork(command: string, context: any, userId: string) {
+async function handleScheduleWork(_command: string, _context: any, _userId: string) {
   return {
     message: "I'll help you schedule the work. What date and time works best for the installation?",
     confidence: 0.9,
@@ -250,7 +233,7 @@ async function handleScheduleWork(command: string, context: any, userId: string)
   }
 }
 
-async function handleCheckPermit(command: string, context: any, userId: string) {
+async function handleCheckPermit(_command: string, _context: any, _userId: string) {
   return {
     message: "Checking permit status for your projects. All permits are currently up to date.",
     confidence: 0.85,
@@ -259,7 +242,7 @@ async function handleCheckPermit(command: string, context: any, userId: string) 
   }
 }
 
-async function handleEmergency(command: string, context: any, userId: string) {
+async function handleEmergency(_command: string, _context: any, _userId: string) {
   return {
     message: "Emergency detected! Notifying safety supervisor and dispatching help to your location immediately.",
     confidence: 1.0,
@@ -269,7 +252,7 @@ async function handleEmergency(command: string, context: any, userId: string) {
   }
 }
 
-async function handleClockIn(userId: string, context: any) {
+async function handleClockIn(_userId: string, _context: any) {
   return {
     message: "You've been clocked in successfully. Have a safe and productive day!",
     confidence: 0.95,
@@ -278,7 +261,7 @@ async function handleClockIn(userId: string, context: any) {
   }
 }
 
-async function handleClockOut(userId: string, context: any) {
+async function handleClockOut(_userId: string, _context: any) {
   return {
     message: "You've been clocked out. Great work today! You worked 8 hours and 15 minutes.",
     confidence: 0.95,
@@ -287,7 +270,7 @@ async function handleClockOut(userId: string, context: any) {
   }
 }
 
-async function handleWeatherCheck(context: any) {
+async function handleWeatherCheck(_context: any) {
   return {
     message: "Current weather is 75°F and sunny. Perfect conditions for solar installation work!",
     confidence: 0.9,
@@ -296,7 +279,7 @@ async function handleWeatherCheck(context: any) {
   }
 }
 
-async function handleSafetyCheck(command: string, context: any, userId: string) {
+async function handleSafetyCheck(_command: string, _context: any, _userId: string) {
   return {
     message: "Safety check initiated. All protocols are being followed. Remember to wear your PPE at all times.",
     confidence: 0.9,

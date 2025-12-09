@@ -14,16 +14,17 @@ const updateAgentSchema = z.object({
 
 // GET - Fetch a single agent
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // TODO: Add proper authentication
     const userId = 'demo-user-001'
+    const { id: agentId } = await params
 
     const agent = await prisma.customAgent.findFirst({
       where: {
-        id: params.id,
+        id: agentId,
         userId,
       },
       include: {
@@ -56,11 +57,12 @@ export async function GET(
 // PATCH - Update an agent
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // TODO: Add proper authentication
     const userId = 'demo-user-001'
+    const { id: agentId } = await params
 
     const body = await request.json()
     const validatedData = updateAgentSchema.parse(body)
@@ -68,7 +70,7 @@ export async function PATCH(
     // Check if agent exists and belongs to user
     const existingAgent = await prisma.customAgent.findFirst({
       where: {
-        id: params.id,
+        id: agentId,
         userId,
       },
     })
@@ -80,13 +82,18 @@ export async function PATCH(
       )
     }
 
-    // Update the agent
+    // Update the agent - explicit field updates for exactOptionalPropertyTypes
     const updatedAgent = await prisma.customAgent.update({
       where: {
-        id: params.id,
+        id: agentId,
       },
       data: {
-        ...validatedData,
+        ...(validatedData.name !== undefined && { name: validatedData.name }),
+        ...(validatedData.role !== undefined && { role: validatedData.role }),
+        ...(validatedData.languages !== undefined && { languages: validatedData.languages }),
+        ...(validatedData.knowledgeBases !== undefined && { knowledgeBases: validatedData.knowledgeBases }),
+        ...(validatedData.isActive !== undefined && { isActive: validatedData.isActive }),
+        ...(validatedData.testMode !== undefined && { testMode: validatedData.testMode }),
         updatedAt: new Date(),
       },
     })
@@ -111,17 +118,18 @@ export async function PATCH(
 
 // DELETE - Remove an agent
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // TODO: Add proper authentication
     const userId = 'demo-user-001'
+    const { id: agentId } = await params
 
     // Check if agent exists and belongs to user
     const existingAgent = await prisma.customAgent.findFirst({
       where: {
-        id: params.id,
+        id: agentId,
         userId,
       },
     })
@@ -136,7 +144,7 @@ export async function DELETE(
     // Delete the agent and its interactions (cascade)
     await prisma.customAgent.delete({
       where: {
-        id: params.id,
+        id: agentId,
       },
     })
 

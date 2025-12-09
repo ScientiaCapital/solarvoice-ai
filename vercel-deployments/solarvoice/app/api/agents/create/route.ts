@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { getServerSession } from 'next-auth'
+// TODO: Re-enable when auth is implemented
+// import { getServerSession } from 'next-auth'
 import { z } from 'zod'
 
 // Validation schema for agent creation
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
 }
 
 // GET endpoint to list user's agents
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // TODO: Add proper authentication
     const userId = 'demo-user-001'

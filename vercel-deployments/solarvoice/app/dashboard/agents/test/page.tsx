@@ -3,17 +3,12 @@
 import dynamic from 'next/dynamic'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Mic, 
-  MicOff, 
-  Volume2, 
-  VolumeX, 
-  Play, 
-  Square, 
-  RotateCcw, 
+import {
+  Mic,
+  Volume2,
+  Play,
   Download,
   Globe,
-  Zap,
   MessageSquare,
   Clock,
   Activity,
@@ -163,8 +158,7 @@ function VoiceTestPage() {
   const [isServiceAvailable, setIsServiceAvailable] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState('test')
-  const [showSettings, setShowSettings] = useState(false)
-  
+
   // Settings state
   const [voiceSettings, setVoiceSettings] = useState({
     stability: 0.5,
@@ -184,8 +178,6 @@ function VoiceTestPage() {
   })
   
   // Refs
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const audioChunksRef = useRef<Blob[]>([])
   const conversationEndRef = useRef<HTMLDivElement>(null)
 
   // Initialize speech recognition
@@ -207,14 +199,17 @@ function VoiceTestPage() {
       
       recognitionInstance.onresult = (event) => {
         const current = event.resultIndex
-        const transcript = event.results[current][0].transcript
-        const confidence = event.results[current][0].confidence
-        
-        setTranscript(transcript)
-        setConfidence(confidence)
-        
-        if (event.results[current].isFinal) {
-          handleUserInput(transcript, confidence)
+        const result = event.results?.[current]?.[0]
+        if (!result) return
+
+        const transcriptText = result.transcript
+        const confidenceValue = result.confidence ?? 0
+
+        setTranscript(transcriptText)
+        setConfidence(confidenceValue)
+
+        if (event.results?.[current]?.isFinal) {
+          handleUserInput(transcriptText, confidenceValue)
         }
       }
       
@@ -274,7 +269,7 @@ function VoiceTestPage() {
       averageConfidence: (prev.averageConfidence + confidence) / 2,
       languageBreakdown: {
         ...prev.languageBreakdown,
-        [currentLanguage]: prev.languageBreakdown[currentLanguage] + 1
+        [currentLanguage]: (prev.languageBreakdown[currentLanguage] ?? 0) + 1
       }
     }))
     
@@ -303,10 +298,9 @@ function VoiceTestPage() {
         ]
       }
       
-      const responseText = responses[currentLanguage][
-        Math.floor(Math.random() * responses[currentLanguage].length)
-      ]
-      
+      const langResponses = responses[currentLanguage]
+      const responseText = langResponses[Math.floor(Math.random() * langResponses.length)] ?? 'I understand your request.'
+
       // Add agent message to conversation
       const agentMessage: ConversationItem = {
         id: `agent_${Date.now()}`,
@@ -314,15 +308,12 @@ function VoiceTestPage() {
         type: 'agent',
         text: responseText,
         language: currentLanguage,
-        agentId: selectedAgent.id
+        agentId: selectedAgent?.id ?? ''
       }
-      
+
       setConversation(prev => [...prev, agentMessage])
-      
-      // Synthesize speech if auto-play is enabled
-      if (voiceSettings.autoPlay) {
-        await elevenlabsService.textToSpeech(responseText, selectedAgent.id as any)
-      }
+
+      // TODO: Add voice synthesis when ElevenLabs is configured
       
     } catch (error) {
       console.error('Error generating response:', error)
@@ -473,9 +464,9 @@ function VoiceTestPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Select 
-                  value={selectedAgent.id} 
-                  onValueChange={(value) => setSelectedAgent(EQUIPMENT_MODELS.find(m => m.id === value) || EQUIPMENT_MODELS[0])}
+                <Select
+                  value={selectedAgent?.id ?? ''}
+                  onValueChange={(value: string) => setSelectedAgent(EQUIPMENT_MODELS.find(m => m.id === value) || EQUIPMENT_MODELS[0])}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -491,7 +482,8 @@ function VoiceTestPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                
+
+                {selectedAgent && (
                 <div className="p-4 bg-muted rounded-lg space-y-2">
                   <h4 className="font-semibold">{selectedAgent.name}</h4>
                   <p className="text-sm text-muted-foreground">{selectedAgent.description}</p>
@@ -503,6 +495,7 @@ function VoiceTestPage() {
                     ))}
                   </div>
                 </div>
+                )}
 
                 {/* Language Selection */}
                 <div className="space-y-2">
@@ -772,25 +765,25 @@ function VoiceTestPage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>English</span>
-                  <span>{stats.languageBreakdown.en} interactions</span>
+                  <span>{stats.languageBreakdown?.en ?? 0} interactions</span>
                 </div>
-                <Progress 
-                  value={stats.totalInteractions > 0 
-                    ? (stats.languageBreakdown.en / stats.totalInteractions) * 100 
+                <Progress
+                  value={stats.totalInteractions > 0
+                    ? ((stats.languageBreakdown?.en ?? 0) / stats.totalInteractions) * 100
                     : 0
-                  } 
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Spanish</span>
-                  <span>{stats.languageBreakdown.es} interactions</span>
+                  <span>{stats.languageBreakdown?.es ?? 0} interactions</span>
                 </div>
-                <Progress 
-                  value={stats.totalInteractions > 0 
-                    ? (stats.languageBreakdown.es / stats.totalInteractions) * 100 
+                <Progress
+                  value={stats.totalInteractions > 0
+                    ? ((stats.languageBreakdown?.es ?? 0) / stats.totalInteractions) * 100
                     : 0
-                  } 
+                  }
                 />
               </div>
             </CardContent>
@@ -817,7 +810,7 @@ function VoiceTestPage() {
                   </label>
                   <Slider
                     value={[voiceSettings.stability]}
-                    onValueChange={([value]: number[]) => setVoiceSettings(prev => ({ ...prev, stability: value }))}
+                    onValueChange={(values: number[]) => setVoiceSettings(prev => ({ ...prev, stability: values[0] ?? prev.stability }))}
                     max={1}
                     min={0}
                     step={0.1}
@@ -834,7 +827,7 @@ function VoiceTestPage() {
                   </label>
                   <Slider
                     value={[voiceSettings.similarityBoost]}
-                    onValueChange={([value]: number[]) => setVoiceSettings(prev => ({ ...prev, similarityBoost: value }))}
+                    onValueChange={(values: number[]) => setVoiceSettings(prev => ({ ...prev, similarityBoost: values[0] ?? prev.similarityBoost }))}
                     max={1}
                     min={0}
                     step={0.1}
@@ -851,7 +844,7 @@ function VoiceTestPage() {
                   </label>
                   <Slider
                     value={[voiceSettings.style]}
-                    onValueChange={([value]: number[]) => setVoiceSettings(prev => ({ ...prev, style: value }))}
+                    onValueChange={(values: number[]) => setVoiceSettings(prev => ({ ...prev, style: values[0] ?? prev.style }))}
                     max={1}
                     min={0}
                     step={0.1}

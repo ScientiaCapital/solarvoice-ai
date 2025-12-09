@@ -120,7 +120,7 @@ interface AppState extends VoiceState, UIState {
   stopListening: () => void
   deployAgent: (agentId: string) => Promise<void>
   processVoiceCommand: (command: string) => void
-  speakResponse: (text: string) => void
+  speakResponse: (text: string, agentId?: AgentId) => void
 }
 
 // Initial agent data

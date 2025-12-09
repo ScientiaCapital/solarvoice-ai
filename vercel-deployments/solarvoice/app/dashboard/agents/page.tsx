@@ -2,20 +2,20 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import type { Route } from 'next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Plus, 
-  Mic, 
-  Edit, 
-  Trash2, 
+import {
+  Plus,
+  Mic,
+  Edit,
+  Trash2,
   Play,
   Globe,
   Brain,
   DollarSign,
-  Clock,
-  MoreVertical
+  Clock
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -77,7 +77,7 @@ export default function AgentsPage() {
   }
 
   const handleEdit = (id: string) => {
-    router.push(`/dashboard/agents/edit/${id}`)
+    router.push(`/dashboard/agents/edit/${id}` as Route)
   }
 
   const formatDate = (dateString: string) => {

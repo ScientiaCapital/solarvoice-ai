@@ -2,393 +2,261 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { 
-  Check, 
-  Star, 
-  Zap, 
-  Shield, 
-  Mic, 
-  Play, 
-  ArrowRight,
-  Building2,
-  Factory,
-  Users,
-  TrendingUp,
-  Calculator,
-  Globe
-} from "lucide-react"
+import { Check, ArrowLeft, Sparkles } from "lucide-react"
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly')
-  const [selectedTier, setSelectedTier] = useState<string | null>(null)
 
-  const subscriptionTiers = [
+  const pricingTiers = [
     {
       id: 'starter',
       name: 'Starter',
-      description: 'Perfect for small solar contractors',
-      monthlyPrice: 99,
-      annualPrice: 990,
-      popular: false,
-      projects: '1-10 projects',
+      badge: 'Free Forever',
+      badgeVariant: 'secondary' as const,
+      monthlyPrice: 0,
+      annualPrice: 0,
+      description: 'Perfect for trying out SolarVoice',
       features: [
-        'Up to 10 active projects',
-        'Basic AI agent deployments',
-        'Voice command interface',
-        'Standard support',
-        'Project templates',
+        '100 AI calls per month',
+        '1 AI voice agent',
         'Basic analytics',
-        '3 agent types included'
+        'Email support',
       ],
-      agentCredits: 50,
-      limitations: ['Limited to 3 agent types', 'Email support only']
+      cta: 'Get Started Free',
+      highlighted: false
     },
     {
       id: 'professional',
       name: 'Professional',
-      description: 'Ideal for growing solar businesses',
-      monthlyPrice: 299,
-      annualPrice: 2990,
-      popular: true,
-      projects: '11-50 projects',
+      badge: 'Most Popular',
+      badgeVariant: 'default' as const,
+      monthlyPrice: 99,
+      annualPrice: 79,
+      description: 'For growing solar businesses',
       features: [
-        'Up to 50 active projects',
-        'All AI agent types',
-        'Advanced voice commands',
+        '2,500 AI calls per month',
+        '5 AI voice agents',
+        'Advanced analytics',
         'Priority support',
-        'Custom project templates',
-        'Advanced analytics & reporting',
-        'Team collaboration tools',
-        'API access',
-        'White-label options'
+        'Calendar integrations',
+        'Custom hold music',
       ],
-      agentCredits: 200,
-      limitations: []
+      cta: 'Start Free Trial',
+      highlighted: true
     },
     {
       id: 'enterprise',
       name: 'Enterprise',
-      description: 'For large solar companies & enterprise clients',
-      monthlyPrice: 999,
-      annualPrice: 9990,
-      popular: false,
-      projects: '51+ projects',
+      badge: 'Contact Sales',
+      badgeVariant: 'outline' as const,
+      monthlyPrice: null,
+      annualPrice: null,
+      description: 'Custom solutions for large teams',
       features: [
-        'Unlimited projects',
-        'All AI agents + custom agents',
-        'Voice biometric authentication',
-        'Dedicated account manager',
+        'Unlimited AI calls',
+        'Unlimited AI voice agents',
         'Custom integrations',
-        'Advanced security features',
-        'Multi-tenant architecture',
+        'Dedicated account manager',
         'SLA guarantees',
-        'Custom training & onboarding'
+        'White-label options',
       ],
-      agentCredits: 1000,
-      limitations: []
+      cta: 'Contact Sales',
+      highlighted: false
     }
   ]
 
-  const agentPricing = [
-    {
-      id: 'commercial-manager',
-      name: 'Commercial Project Manager',
-      specialty: 'Commercial & Industrial Solar Projects',
-      icon: Building2,
-      price: 149.99,
-      description: 'Advanced project management for commercial solar installations',
-      features: ['Automated compliance tracking', 'Resource optimization', 'Risk assessment']
-    },
-    {
-      id: 'customer-success',
-      name: 'Customer Success Specialist',
-      specialty: 'Utility-Scale Customer Management',
-      icon: Users,
-      price: 89.99,
-      description: 'Strategic customer success for utility-scale installations',
-      features: ['Customer onboarding', 'Satisfaction tracking', 'Renewal optimization']
-    },
-    {
-      id: 'performance-analyst',
-      name: 'Performance Analytics Specialist',
-      specialty: 'Solar System Analytics & Optimization',
-      icon: TrendingUp,
-      price: 199.99,
-      description: 'Comprehensive analytics and performance optimization',
-      features: ['Predictive analytics', 'ROI tracking', 'Custom reporting']
-    },
-    {
-      id: 'sales-specialist',
-      name: 'Sales Automation Specialist',
-      specialty: 'Solar Sales & Lead Management',
-      icon: Zap,
-      price: 129.99,
-      description: 'Strategic sales optimization for enterprise projects',
-      features: ['Lead qualification', 'Proposal automation', 'Pipeline management']
-    },
-    {
-      id: 'utility-coordinator',
-      name: 'Utility-Scale Coordinator',
-      specialty: 'Utility-Scale & Megawatt Projects',
-      icon: Factory,
-      price: 179.99,
-      description: 'Comprehensive coordination for utility-scale installations',
-      features: ['Timeline optimization', 'Resource allocation', 'Quality assurance']
-    }
-  ]
+  const getDisplayPrice = (tier: typeof pricingTiers[0]) => {
+    if (tier.monthlyPrice === null) return 'Custom'
+    if (tier.monthlyPrice === 0) return 'Free'
 
-  const getPrice = (tier: typeof subscriptionTiers[0]) => {
     const price = billingCycle === 'monthly' ? tier.monthlyPrice : tier.annualPrice
-    const period = billingCycle === 'monthly' ? 'month' : 'year'
-    const savings = billingCycle === 'annual' ? tier.monthlyPrice * 12 - tier.annualPrice : 0
-    return { price, period, savings }
+    return `$${price}`
+  }
+
+  const getPeriod = (tier: typeof pricingTiers[0]) => {
+    if (tier.monthlyPrice === null || tier.monthlyPrice === 0) return ''
+    return '/month'
+  }
+
+  const getSavings = () => {
+    const professionalSavings = (99 - 79) * 12
+    return professionalSavings
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/10">
+    <main className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">
+      {/* Header */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <Link href="/">
+          <Button variant="ghost" size="sm">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Home
+          </Button>
+        </Link>
+      </div>
+
       {/* Hero Section */}
-      <section className="relative py-24 overflow-hidden">
+      <section className="relative py-16 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="mb-8"
+              transition={{ duration: 0.6 }}
             >
-              <Badge className="glass-card px-6 py-3 mb-4 text-sm font-medium border-2 border-primary/30 bg-primary/10 text-primary">
-                <motion.div
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="mr-2"
-                >
-                  <Mic className="h-4 w-4" />
-                </motion.div>
-                Voice-Activated Pricing Calculator
-              </Badge>
-              
-              {/* Interactive Voice Calculator */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                className="glass-card p-4 max-w-md mx-auto border border-primary/20"
-              >
-                <div className="flex items-center justify-center gap-3 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                    <span>Try saying:</span>
-                  </div>
-                </div>
-                <div className="mt-2 text-center">
-                  <div className="text-sm font-medium text-primary">
-                    "Calculate pricing for 100kW commercial solar"
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Or "Compare Professional vs Enterprise plans"
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-            
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="text-4xl md:text-6xl font-bold tracking-tight mb-6"
-            >
-              <span className="gradient-text-ai">Transparent Pricing</span><br />
-              <span className="gradient-text-solar">for Solar Innovation</span>
-            </motion.h1>
-            
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.4 }}
-              className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
-            >
-              Choose the perfect plan for your solar business. From small contractors to enterprise companies.
-            </motion.p>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+                Simple, Transparent <span className="text-primary">Pricing</span>
+              </h1>
 
-            {/* Billing Toggle */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.6 }}
-              className="flex items-center justify-center gap-4 mb-12"
-            >
-              <span className={billingCycle === 'monthly' ? 'font-semibold' : 'text-muted-foreground'}>
-                Monthly
-              </span>
-              <button
-                onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'annual' : 'monthly')}
-                className={`relative w-16 h-8 rounded-full transition-colors ${
-                  billingCycle === 'annual' ? 'bg-primary' : 'bg-muted'
-                }`}
-              >
-                <div className={`absolute w-6 h-6 bg-white rounded-full top-1 transition-transform ${
-                  billingCycle === 'annual' ? 'translate-x-9' : 'translate-x-1'
-                }`} />
-              </button>
-              <span className={billingCycle === 'annual' ? 'font-semibold' : 'text-muted-foreground'}>
-                Annual
-                <Badge className="ml-2 bg-green-500">Save 17%</Badge>
-              </span>
+              <p className="text-xl text-muted-foreground mb-12">
+                Choose the perfect plan for your solar business. No hidden fees.
+              </p>
+
+              {/* Billing Toggle */}
+              <div className="flex items-center justify-center gap-4 mb-16">
+                <span className={`text-sm font-medium transition-colors ${
+                  billingCycle === 'monthly' ? 'text-foreground' : 'text-muted-foreground'
+                }`}>
+                  Monthly
+                </span>
+
+                <button
+                  onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'annual' : 'monthly')}
+                  className={`relative w-14 h-7 rounded-full transition-colors ${
+                    billingCycle === 'annual' ? 'bg-primary' : 'bg-muted'
+                  }`}
+                  aria-label="Toggle billing cycle"
+                >
+                  <motion.div
+                    className="absolute w-5 h-5 bg-white rounded-full top-1 shadow-md"
+                    animate={{
+                      x: billingCycle === 'annual' ? 28 : 4
+                    }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                </button>
+
+                <span className={`text-sm font-medium transition-colors ${
+                  billingCycle === 'annual' ? 'text-foreground' : 'text-muted-foreground'
+                }`}>
+                  Annual
+                </span>
+
+                {billingCycle === 'annual' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Badge className="bg-green-500 hover:bg-green-500 text-white">
+                      <Sparkles className="w-3 h-3 mr-1" />
+                      Save 20%
+                    </Badge>
+                  </motion.div>
+                )}
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Subscription Tiers */}
-      <section className="py-16">
+      {/* Pricing Cards */}
+      <section className="pb-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {subscriptionTiers.map((tier, index) => {
-              const { price, period, savings } = getPrice(tier)
-              return (
-                <motion.div
-                  key={tier.id}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  className="relative"
-                >
-                  {tier.popular && (
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-1">
-                        <Star className="h-3 w-3 mr-1" />
-                        Most Popular
-                      </Badge>
-                    </div>
-                  )}
-                  
-                  <Card className={`h-full ${tier.popular ? 'border-primary shadow-xl scale-105' : 'border-border'} transition-all duration-300 hover:shadow-lg`}>
-                    <CardHeader className="text-center pb-8">
-                      <CardTitle className="text-2xl font-bold">{tier.name}</CardTitle>
-                      <CardDescription className="text-base">{tier.description}</CardDescription>
-                      <div className="mt-6">
-                        <div className="text-4xl font-bold">
-                          ${price}
-                          <span className="text-lg font-normal text-muted-foreground">/{period}</span>
-                        </div>
-                        {savings > 0 && (
-                          <div className="text-green-600 text-sm mt-1">
-                            Save ${savings} annually!
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-sm text-muted-foreground mt-2">{tier.projects}</div>
-                    </CardHeader>
-                    
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div className="text-center">
-                          <Badge variant="outline" className="px-3 py-1">
-                            {tier.agentCredits} Agent Credits/Month
-                          </Badge>
-                        </div>
-                        
-                        <ul className="space-y-3">
-                          {tier.features.map((feature, featureIndex) => (
-                            <li key={featureIndex} className="flex items-start gap-3">
-                              <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                              <span className="text-sm">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        
-                        {tier.limitations.length > 0 && (
-                          <div className="pt-4 border-t">
-                            <h4 className="text-sm font-medium text-muted-foreground mb-2">Limitations:</h4>
-                            <ul className="space-y-1">
-                              {tier.limitations.map((limitation, limitIndex) => (
-                                <li key={limitIndex} className="text-xs text-muted-foreground">
-                                  • {limitation}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                        
-                        <Button 
-                          className={`w-full mt-6 ${tier.popular ? 'btn-energy' : ''}`}
-                          size="lg"
-                          onClick={() => setSelectedTier(tier.id)}
-                        >
-                          <Mic className="mr-2 h-4 w-4" />
-                          Get Started
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* AI Agent Pricing */}
-      <section className="py-16 bg-muted/30">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight mb-4">
-              <span className="gradient-text-ai">AI Agent Specialists</span>
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Deploy specialized AI agents on-demand. Pay per deployment with voice activation.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {agentPricing.map((agent, index) => (
+            {pricingTiers.map((tier, index) => (
               <motion.div
-                key={agent.id}
-                initial={{ opacity: 0, y: 30 }}
+                key={tier.id}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="relative"
               >
-                <Card className="glass-card border-0 hover:shadow-xl transition-all duration-300">
-                  <CardHeader>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                        <agent.icon className="h-6 w-6 text-primary" />
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-primary">${agent.price}</div>
-                        <div className="text-xs text-muted-foreground">per deployment</div>
-                      </div>
+                <Card className={`h-full relative overflow-hidden transition-all duration-300 ${
+                  tier.highlighted
+                    ? 'border-primary shadow-xl shadow-primary/20 scale-105'
+                    : 'border-border hover:border-primary/50'
+                }`}>
+                  {tier.highlighted && (
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-blue-600 to-primary" />
+                  )}
+
+                  <CardHeader className="text-center pb-8 pt-8">
+                    <div className="mb-4">
+                      <Badge variant={tier.badgeVariant} className="mb-4">
+                        {tier.badge}
+                      </Badge>
                     </div>
-                    <CardTitle className="text-lg">{agent.name}</CardTitle>
-                    <Badge variant="secondary" className="w-fit text-xs">
-                      {agent.specialty}
-                    </Badge>
-                    <CardDescription className="mt-2">
-                      {agent.description}
+
+                    <CardTitle className="text-2xl font-bold mb-2">
+                      {tier.name}
+                    </CardTitle>
+
+                    <CardDescription className="text-base mb-6">
+                      {tier.description}
                     </CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div>
-                        <h4 className="text-sm font-medium mb-2">Key Capabilities:</h4>
-                        <ul className="space-y-1">
-                          {agent.features.map((feature, featureIndex) => (
-                            <li key={featureIndex} className="text-sm text-muted-foreground flex items-center gap-2">
-                              <div className="w-1 h-1 rounded-full bg-primary" />
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
+
+                    <div className="mb-2">
+                      <div className="text-5xl font-bold">
+                        {getDisplayPrice(tier)}
+                        {getPeriod(tier) && (
+                          <span className="text-lg font-normal text-muted-foreground">
+                            {getPeriod(tier)}
+                          </span>
+                        )}
                       </div>
-                      
-                      <Button variant="outline" className="w-full" size="sm">
-                        <Play className="mr-2 h-4 w-4" />
-                        Try Voice Command
-                      </Button>
+                      {tier.highlighted && billingCycle === 'annual' && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="text-sm text-green-600 font-medium mt-2"
+                        >
+                          Save ${getSavings()}/year
+                        </motion.div>
+                      )}
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="pt-0">
+                    <Button
+                      className={`w-full mb-6 ${
+                        tier.highlighted
+                          ? 'bg-primary hover:bg-primary/90'
+                          : ''
+                      }`}
+                      size="lg"
+                      variant={tier.highlighted ? 'default' : 'outline'}
+                    >
+                      {tier.cta}
+                    </Button>
+
+                    <div className="space-y-4">
+                      <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                        What's included:
+                      </p>
+
+                      <ul className="space-y-3">
+                        {tier.features.map((feature, featureIndex) => (
+                          <motion.li
+                            key={featureIndex}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.4, delay: index * 0.1 + featureIndex * 0.05 }}
+                            className="flex items-start gap-3"
+                          >
+                            <div className="mt-0.5">
+                              <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                            </div>
+                            <span className="text-sm text-foreground">
+                              {feature}
+                            </span>
+                          </motion.li>
+                        ))}
+                      </ul>
                     </div>
                   </CardContent>
                 </Card>
@@ -398,70 +266,38 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Enterprise CTA */}
-      <section className="py-16">
+      {/* Enterprise CTA Section */}
+      <section className="pb-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="glass-card border-0 max-w-4xl mx-auto">
-            <CardContent className="p-12 text-center">
-              <Globe className="h-16 w-16 text-primary mx-auto mb-6" />
-              <h3 className="text-2xl font-bold mb-4">
-                Need Something Custom?
-              </h3>
-              <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-                We work with enterprise companies to build custom AI solutions for their solar operations. 
-                Get dedicated support, custom integrations, and white-label options.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="btn-energy">
-                  <Mic className="mr-2 h-5 w-5" />
-                  Schedule Consultation
-                </Button>
-                <Button size="lg" variant="outline">
-                  <Shield className="mr-2 h-5 w-5" />
-                  Enterprise Demo
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <Card className="max-w-4xl mx-auto bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/20">
+              <CardContent className="p-8 md:p-12 text-center">
+                <div className="max-w-2xl mx-auto">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                    Need a Custom Solution?
+                  </h3>
 
-      {/* FAQ Section */}
-      <section className="py-16 bg-muted/30">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight mb-4">
-              Frequently Asked Questions
-            </h2>
-          </div>
-          
-          <div className="max-w-3xl mx-auto space-y-6">
-            {[
-              {
-                question: "How do voice commands work with pricing?",
-                answer: "Simply say 'Deploy Titan agent' and the system will automatically charge your account based on your subscription tier and available credits."
-              },
-              {
-                question: "Can I switch between subscription tiers?",
-                answer: "Yes! You can upgrade or downgrade your subscription at any time. Changes take effect at the next billing cycle."
-              },
-              {
-                question: "What happens if I exceed my agent credits?",
-                answer: "You'll be charged per-deployment rates for additional usage. We'll send notifications when you're approaching your limits."
-              },
-              {
-                question: "Is there a free trial available?",
-                answer: "Yes! All new customers get a 14-day free trial with access to all features and 25 complimentary agent deployments."
-              }
-            ].map((faq, index) => (
-              <Card key={index} className="glass-card border-0">
-                <CardContent className="p-6">
-                  <h4 className="font-semibold mb-2">{faq.question}</h4>
-                  <p className="text-muted-foreground">{faq.answer}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <p className="text-lg text-muted-foreground mb-8">
+                    Our Enterprise plan is tailored to your specific needs. Get dedicated support,
+                    custom integrations, and white-label options for your solar business.
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button size="lg" className="bg-primary hover:bg-primary/90">
+                      Contact Sales
+                    </Button>
+                    <Button size="lg" variant="outline">
+                      Schedule Demo
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </section>
     </main>

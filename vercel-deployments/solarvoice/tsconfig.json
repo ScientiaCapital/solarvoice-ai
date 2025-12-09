@@ -45,5 +45,5 @@
     "noImplicitThis": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "__tests__", "__mocks__", "**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "jest.setup.ts", "jest.polyfills.ts", "jest.config.ts", "playwright.config.ts", "scripts/**"]
 }

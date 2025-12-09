@@ -1,22 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// This is a secure server-side endpoint for ElevenLabs text-to-speech
-// API key is never exposed to the client
+// =============================================================
+// TEXT-TO-SPEECH ENDPOINT
+// =============================================================
+// Status: ElevenLabs DEPRECATED - Migrating to Cartesia
+// TODO: Implement Cartesia TTS in Phase 5
+// =============================================================
 
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
+// DEPRECATED: ElevenLabs API key - keeping for reference
+// const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
+
+// NEW: Cartesia API key (to be implemented in Phase 5)
+// const CARTESIA_API_KEY = process.env.CARTESIA_API_KEY
 
 export async function POST(request: NextRequest) {
   try {
-    // Check for API key on server
-    if (!ELEVENLABS_API_KEY) {
-      console.error('ElevenLabs API key not configured on server')
-      return NextResponse.json(
-        { error: 'Voice service not configured' },
-        { status: 500 }
-      )
-    }
-
-    const { text, voiceId, modelId, language } = await request.json()
+    const { text, voiceId, language } = await request.json()
 
     // Validate required fields
     if (!text) {
@@ -26,21 +25,41 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Default voice settings
-    const defaultVoiceId = 'pNInz6obpgDQGcFmaJgB' // Adam - Professional male
-    // Use highest quality model based on language
+    // TODO: Implement Cartesia TTS in Phase 5
+    // For now, return a placeholder response indicating migration status
+    console.log('[VOICE_SYNTHESIZE] Request received:', {
+      textLength: text.length,
+      voiceId: voiceId || 'default',
+      language: language || 'en',
+      status: 'PENDING_CARTESIA_INTEGRATION',
+    })
+
+    return NextResponse.json(
+      {
+        error: 'Voice synthesis temporarily unavailable',
+        message: 'Migrating from ElevenLabs to Cartesia. Please use browser TTS fallback.',
+        migration: {
+          from: 'ElevenLabs',
+          to: 'Cartesia',
+          status: 'in_progress',
+        },
+      },
+      { status: 503 }
+    )
+
+    /* DEPRECATED: ElevenLabs implementation
+    if (!ELEVENLABS_API_KEY) {
+      console.error('ElevenLabs API key not configured on server')
+      return NextResponse.json(
+        { error: 'Voice service not configured' },
+        { status: 500 }
+      )
+    }
+
+    const defaultVoiceId = 'pNInz6obpgDQGcFmaJgB'
     const isSpanish = language === 'es'
     const defaultModelId = isSpanish ? 'eleven_multilingual_v2' : 'eleven_monolingual_v1'
 
-    // Log for debugging
-    console.log('ElevenLabs TTS Request:', {
-      voiceId: voiceId || defaultVoiceId,
-      modelId: modelId || defaultModelId,
-      textLength: text.length,
-      language: language || 'en',
-    })
-
-    // Call ElevenLabs API from server
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voiceId || defaultVoiceId}`,
       {
@@ -54,9 +73,9 @@ export async function POST(request: NextRequest) {
           text,
           model_id: modelId || defaultModelId,
           voice_settings: {
-            stability: 0.71,           // More natural variation (was 0.5)
-            similarity_boost: 0.75,     // Better voice matching (was 0.5)
-            style: 0.0,                // Remove style exaggeration for naturalness
+            stability: 0.71,
+            similarity_boost: 0.75,
+            style: 0.0,
             use_speaker_boost: true,
           },
         }),
@@ -72,21 +91,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get audio data
     const audioData = await response.arrayBuffer()
-
-    // Return audio to client with CORS headers
     return new NextResponse(audioData, {
       status: 200,
       headers: {
         'Content-Type': 'audio/mpeg',
         'Content-Length': audioData.byteLength.toString(),
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Cache-Control': 'no-cache',
       },
     })
+    */
 
   } catch (error) {
     console.error('Voice synthesis error:', error)
@@ -97,52 +111,49 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Get available voices (server-side)
-export async function GET(request: NextRequest) {
-  try {
-    if (!ELEVENLABS_API_KEY) {
-      return NextResponse.json(
-        { error: 'Voice service not configured' },
-        { status: 500 }
-      )
-    }
+// Get available voices
+export async function GET(_request: NextRequest) {
+  // TODO: Implement Cartesia voice listing in Phase 5
+  return NextResponse.json({
+    status: 'migration_in_progress',
+    message: 'Voice listing temporarily unavailable during Cartesia migration',
+    migration: {
+      from: 'ElevenLabs',
+      to: 'Cartesia',
+      envKey: 'CARTESIA_API_KEY',
+    },
+    fallback: 'Use browser speechSynthesis API',
+  })
 
-    const response = await fetch('https://api.elevenlabs.io/v1/voices', {
-      headers: {
-        'xi-api-key': ELEVENLABS_API_KEY,
-      },
-    })
-
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: 'Failed to fetch voices' },
-        { status: response.status }
-      )
-    }
-
-    const data = await response.json()
-    
-    // Return only necessary voice data to client
-    const voices = data.voices.map((voice: any) => ({
-      voice_id: voice.voice_id,
-      name: voice.name,
-      category: voice.category,
-      labels: voice.labels,
-    }))
-
-    return NextResponse.json({ voices }, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      }
-    })
-
-  } catch (error) {
-    console.error('Error fetching voices:', error)
+  /* DEPRECATED: ElevenLabs implementation
+  if (!ELEVENLABS_API_KEY) {
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Voice service not configured' },
       { status: 500 }
     )
   }
+
+  const response = await fetch('https://api.elevenlabs.io/v1/voices', {
+    headers: {
+      'xi-api-key': ELEVENLABS_API_KEY,
+    },
+  })
+
+  if (!response.ok) {
+    return NextResponse.json(
+      { error: 'Failed to fetch voices' },
+      { status: response.status }
+    )
+  }
+
+  const data = await response.json()
+  const voices = data.voices.map((voice: any) => ({
+    voice_id: voice.voice_id,
+    name: voice.name,
+    category: voice.category,
+    labels: voice.labels,
+  }))
+
+  return NextResponse.json({ voices })
+  */
 }

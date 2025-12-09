@@ -1,25 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Secure server-side endpoint for ElevenLabs speech-to-text
-// Uses Scribe v1 model that supports 99 languages
+// =============================================================
+// SPEECH-TO-TEXT ENDPOINT
+// =============================================================
+// Status: ElevenLabs DEPRECATED - Migrating to Deepgram/AssemblyAI
+// Primary: Deepgram (real-time streaming)
+// Backup: AssemblyAI (batch processing)
+// TODO: Implement Deepgram STT in Phase 5
+// =============================================================
 
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
+// DEPRECATED: ElevenLabs API key
+// const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
+
+// NEW: Voice service API keys (to be implemented in Phase 5)
+// const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY
+// const ASSEMBLYAI_API_KEY = process.env.ASSEMBLYAI_API_KEY
 
 export async function POST(request: NextRequest) {
   try {
-    // Check for API key on server
-    if (!ELEVENLABS_API_KEY) {
-      console.error('ElevenLabs API key not configured on server')
-      return NextResponse.json(
-        { error: 'Transcription service not configured' },
-        { status: 500 }
-      )
-    }
-
     // Get audio file from request
     const formData = await request.formData()
     const audioFile = formData.get('audio') as File
-    const language = formData.get('language') as string || 'auto' // auto-detect by default
+    const language = formData.get('language') as string || 'auto'
 
     if (!audioFile) {
       return NextResponse.json(
@@ -28,27 +30,53 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate file size (max 1GB per ElevenLabs)
-    if (audioFile.size > 1024 * 1024 * 1024) {
+    // Validate file size (max 100MB for MVP)
+    if (audioFile.size > 100 * 1024 * 1024) {
       return NextResponse.json(
-        { error: 'Audio file too large (max 1GB)' },
+        { error: 'Audio file too large (max 100MB)' },
         { status: 400 }
       )
     }
 
-    // Convert File to Buffer
-    const buffer = Buffer.from(await audioFile.arrayBuffer())
+    // TODO: Implement Deepgram STT in Phase 5
+    console.log('[VOICE_TRANSCRIBE] Request received:', {
+      fileName: audioFile.name,
+      fileSize: audioFile.size,
+      fileType: audioFile.type,
+      language,
+      status: 'PENDING_DEEPGRAM_INTEGRATION',
+    })
 
-    // Create FormData for ElevenLabs API
+    return NextResponse.json(
+      {
+        error: 'Transcription service temporarily unavailable',
+        message: 'Migrating from ElevenLabs to Deepgram/AssemblyAI. Please use browser speech recognition fallback.',
+        migration: {
+          from: 'ElevenLabs',
+          to: ['Deepgram (primary)', 'AssemblyAI (backup)'],
+          status: 'in_progress',
+        },
+      },
+      { status: 503 }
+    )
+
+    /* DEPRECATED: ElevenLabs implementation
+    if (!ELEVENLABS_API_KEY) {
+      console.error('ElevenLabs API key not configured on server')
+      return NextResponse.json(
+        { error: 'Transcription service not configured' },
+        { status: 500 }
+      )
+    }
+
+    const buffer = Buffer.from(await audioFile.arrayBuffer())
     const elevenLabsFormData = new FormData()
     elevenLabsFormData.append('audio', new Blob([buffer], { type: audioFile.type }), audioFile.name)
-    
-    // Optional: specify language for better accuracy
+
     if (language !== 'auto') {
       elevenLabsFormData.append('language', language)
     }
 
-    // Call ElevenLabs Scribe API
     const response = await fetch(
       'https://api.elevenlabs.io/v1/audio/transcribe',
       {
@@ -70,15 +98,14 @@ export async function POST(request: NextRequest) {
     }
 
     const transcriptionData = await response.json()
-
-    // Return transcription with metadata
     return NextResponse.json({
       transcript: transcriptionData.text,
       language: transcriptionData.language || language,
       duration: transcriptionData.duration,
-      words: transcriptionData.words, // Word-level timestamps if available
-      speakers: transcriptionData.speakers, // Speaker diarization if available
+      words: transcriptionData.words,
+      speakers: transcriptionData.speakers,
     })
+    */
 
   } catch (error) {
     console.error('Transcription error:', error)
@@ -90,11 +117,11 @@ export async function POST(request: NextRequest) {
 }
 
 // Get transcription capabilities
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   return NextResponse.json({
+    status: 'migration_in_progress',
     capabilities: {
-      maxFileSize: '1GB',
-      maxDuration: '4.5 hours',
+      maxFileSize: '100MB',
       supportedFormats: [
         'mp3', 'mp4', 'mpeg', 'mpga', 'm4a',
         'wav', 'webm', 'ogg', 'flac'
@@ -102,17 +129,18 @@ export async function GET(request: NextRequest) {
       languages: [
         { code: 'en', name: 'English', accuracy: 'Excellent' },
         { code: 'es', name: 'Spanish', accuracy: 'Excellent' },
-        { code: 'fr', name: 'French', accuracy: 'Excellent' },
-        { code: 'de', name: 'German', accuracy: 'Excellent' },
-        { code: 'pt', name: 'Portuguese', accuracy: 'Excellent' },
-        // Add more as needed
       ],
       features: [
         'Auto language detection',
-        'Speaker diarization (up to 32 speakers)',
-        'Word-level timestamps',
-        'Non-speech sound transcription (optional)',
-      ]
-    }
+        'Real-time streaming (Deepgram)',
+        'Batch processing (AssemblyAI)',
+      ],
+    },
+    migration: {
+      from: 'ElevenLabs',
+      to: ['Deepgram (primary)', 'AssemblyAI (backup)'],
+      envKeys: ['DEEPGRAM_API_KEY', 'ASSEMBLYAI_API_KEY'],
+    },
+    fallback: 'Use browser webkitSpeechRecognition API',
   })
 }

@@ -12,11 +12,12 @@ const testRequestSchema = z.object({
 // POST - Test voice interaction with an agent
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // TODO: Add proper authentication
     const userId = 'demo-user-001'
+    const { id: agentId } = await params
 
     const body = await request.json()
     const { input, language, sessionId } = testRequestSchema.parse(body)
@@ -24,7 +25,7 @@ export async function POST(
     // Fetch the agent
     const agent = await prisma.customAgent.findFirst({
       where: {
-        id: params.id,
+        id: agentId,
         userId,
       },
     })

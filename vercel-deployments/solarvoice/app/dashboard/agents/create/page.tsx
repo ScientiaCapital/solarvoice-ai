@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import type { Route } from 'next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Sparkles, Mic, BookOpen, DollarSign, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -82,7 +82,7 @@ export default function CreateAgentPage() {
       
       if (response.ok) {
         const agent = await response.json()
-        router.push(`/dashboard/agents/${agent.id}`)
+        router.push(`/dashboard/agents/${agent.id}` as Route)
       }
     } catch (error) {
       console.error('Failed to create agent:', error)

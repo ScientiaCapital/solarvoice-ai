@@ -2,18 +2,17 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import type { Route } from 'next'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { 
-  Menu, 
-  X, 
-  Mic, 
-  Home, 
-  Calculator, 
-  Users, 
-  Settings,
+import {
+  Menu,
+  X,
+  Mic,
+  Home,
+  Calculator,
+  Users,
   Sparkles
 } from "lucide-react"
 
@@ -46,7 +45,7 @@ export function Navigation() {
             {navItems.map((item) => (
               <Link
                 key={item.href}
-                href={item.href}
+                href={item.href as Route}
                 className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive(item.href)
                     ? 'text-primary bg-primary/10'
@@ -93,7 +92,7 @@ export function Navigation() {
                 {navItems.map((item) => (
                   <Link
                     key={item.href}
-                    href={item.href}
+                    href={item.href as Route}
                     onClick={() => setIsOpen(false)}
                     className={`flex items-center space-x-3 px-3 py-3 rounded-md text-sm font-medium transition-colors ${
                       isActive(item.href)
