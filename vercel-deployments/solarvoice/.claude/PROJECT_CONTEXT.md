@@ -155,39 +155,67 @@ vercel-deployments/solarvoice/
 4. ✅ Jest polyfills fixed (TextEncoder, excluded e2e tests)
 5. ✅ Security audit passed
 
-**Files Deleted:**
-- `lib/services/elevenlabs.ts` - ElevenLabs service
-- `__mocks__/elevenlabs*.ts` - 4 mock files
-- `__tests__/agents/*.test.ts` - 5 agent tests (referenced deleted service)
-- `__tests__/stores/appStore.test.ts` - Store test (referenced deleted service)
-- `solarvoice-platform/` - Empty abandoned submodule
-
-**Files Modified:**
-- `lib/stores/appStore.ts` - Browser TTS only, removed ElevenLabs import
-- `app/api/voice/synthesize/route.ts` - Simplified, returns 503 with browser fallback
-- `app/api/voice/transcribe/route.ts` - Simplified, returns 503 with browser fallback
-- `app/dashboard/agents/test/page.tsx` - Browser TTS check instead of ElevenLabs
-- `jest.polyfills.ts` - Fixed TextEncoder with Object.defineProperty
-- `jest.setup.ts` - Removed ElevenLabs SDK mock
-- `jest.config.ts` - Excluded e2e tests
-
 **Commit:** `52fbca2` "chore: Remove ElevenLabs and clean up project"
 
-**Security Audit Results (2025-12-09 Evening):**
+---
+
+### 2025-12-09 - Agent Marketplace Sprint Complete
+
+**Completed Tasks:**
+1. ✅ Created 19 MEP+Energy agent type definitions (`lib/agent-types.ts`)
+2. ✅ Created Stripe pricing config (`lib/stripe-config.ts`)
+3. ✅ Created prompt loader for markdown parsing (`lib/prompt-loader.ts`)
+4. ✅ Created MetricsCard component (`components/ui/metrics-card.tsx`)
+5. ✅ Created AgentMarketplaceCard component (`components/agents/AgentMarketplaceCard.tsx`)
+6. ✅ Created TradeFilter component (`components/agents/TradeFilter.tsx`)
+7. ✅ Created API routes: `/api/agents/catalog`, `/api/marketplace`, `/api/checkout`
+8. ✅ Created Marketplace page (`app/agents/page.tsx`)
+9. ✅ Created Agent detail page (`app/agents/[slug]/page.tsx`)
+10. ✅ Created Checkout success page (`app/checkout/success/page.tsx`)
+11. ✅ Updated Dashboard with MetricsCard components
+
+**New Files Created:**
+- `lib/agent-types.ts` - 19 agent configs (Solar, HVAC, Plumbing, Electrical, Roofing, Low Voltage)
+- `lib/stripe-config.ts` - PLANS (Starter $149, Pro $299, Enterprise $499)
+- `lib/prompt-loader.ts` - Server-side markdown prompt parsing
+- `components/ui/metrics-card.tsx` - FieldVault-style metrics display
+- `components/agents/AgentMarketplaceCard.tsx` - Marketplace card with rent CTA
+- `components/agents/TradeFilter.tsx` - Trade/scale filter pills
+- `app/api/agents/catalog/route.ts` - GET all 19 agents with filtering
+- `app/api/marketplace/route.ts` - GET single agent + prompt data
+- `app/api/checkout/route.ts` - Stripe checkout session creation
+- `app/agents/page.tsx` - Marketplace grid with search/filters
+- `app/agents/[slug]/page.tsx` - Agent detail with prompt preview + purchase
+- `app/checkout/success/page.tsx` - Post-payment success page
+
+**Modified Files:**
+- `app/dashboard/page.tsx` - MetricsCard with voice agent metrics
+
+**Security Audit Results (2025-12-09 Night):**
 - Hardcoded secrets: 0 (PASS)
-- Critical CVEs: 0 (PASS)
-- High CVEs: 4 (playwright, jws - dev deps only, acceptable)
-- API routes audited: 10 routes
-- Env defaults: No sensitive values exposed
+- Critical CVEs: 0 for solarvoice (PASS) - Next.js 15.4.8 patched
+- API input validation: PASS (trade/scale filter validation, slug validation)
+- Stripe lazy init: PASS (no build-time API key errors)
+- Build: PASSING
+
+**19 Agents Listed:**
+| Trade | Agents | Price Range |
+|-------|--------|-------------|
+| Solar | residential, commercial, industrial, utility | $99-$199 |
+| HVAC | residential, commercial, industrial | $99-$149 |
+| Plumbing | residential, commercial, industrial | $99-$149 |
+| Electrical | residential, commercial, industrial, utility | $99-$199 |
+| Roofing | residential, commercial | $99-$129 |
+| Low Voltage | security-alarm, structured-cabling, fire-alarm | $99-$129 |
 
 ---
 
 ## Tomorrow's Focus
 
 1. [ ] Connect Supabase database (add credentials to .env)
-2. [ ] **USER ACTION**: Delete GitHub repo https://github.com/ScientiaCapital/solarvoice-platform
-3. [ ] Fix remaining Jest test failures (test code issues, not setup)
-4. [ ] Stripe schema alignment
+2. [ ] Test Stripe checkout flow end-to-end with test keys
+3. [ ] Fix remaining Jest test failures (component mocking issues)
+4. [ ] Create webhook handler for checkout.session.completed
 
 ---
 
