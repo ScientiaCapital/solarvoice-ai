@@ -282,38 +282,56 @@ model VoiceInteraction {
   rental     Rental?  @relation(fields: [rentalId], references: [id])
   userId     String
   user       User     @relation(fields: [userId], references: [id])
-  
+
   // Interaction Details
   transcript String   @db.Text
   language   String   @default("en")
   intent     String?  // calculate_roi, check_permit, find_incentives
   confidence Decimal? @db.Decimal(3, 2)
-  
+
   // Context
   projectContext Json?   // Project details at time of interaction
-  
+
   // Performance
   durationSeconds Int
   responseTime    Int?     // in milliseconds
   successful      Boolean  @default(true)
   errorMessage    String?
-  
-  // ElevenLabs Integration
+
+  // Voice Pipeline Latency Tracking (Port from Vozlux)
+  sttLatencyMs    Int?     // Speech-to-text latency
+  llmTtftMs       Int?     // LLM Time to First Token
+  ttsLatencyMs    Int?     // TTS Time to First Audio
+  totalLatencyMs  Int?     // Total end-to-end latency
+
+  // Provider Tracking for A/B Testing
+  sttProvider     String?  // deepgram, web-speech-api
+  llmProvider     String?  // cerebras, anthropic
+  ttsProvider     String?  @default("cartesia") // cartesia, elevenlabs
+
+  // Emotion Tracking (Cartesia Sonic-3)
+  inputEmotion    String?  // Detected emotion from user input
+  responseEmotion String?  // Emotion used for TTS response
+
+  // ElevenLabs Integration (Legacy)
   voiceId         String?
   audioUrl        String?  // Recording URL if saved
-  
+
   // Post-call Analysis (from webhooks)
   summary         String?  @db.Text
   actionItems     Json?    // Tasks identified
   followUpNeeded  Boolean  @default(false)
   leadQuality     String?  // HOT, WARM, COLD
-  
+
   createdAt       DateTime @default(now())
-  
+
   @@index([rentalId])
   @@index([userId])
   @@index([createdAt])
   @@index([intent])
+  @@index([totalLatencyMs])
+  @@index([llmProvider])
+  @@index([responseEmotion])
 }
 
 // =====================================================

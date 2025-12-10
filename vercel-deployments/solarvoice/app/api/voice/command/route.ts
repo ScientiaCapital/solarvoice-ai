@@ -2,6 +2,42 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { verifyAuth } from '@/lib/auth'
+import { detectEmotionFromText, validateEmotion } from '@/lib/voice/emotions'
+
+/**
+ * Command type to response emotion mapping
+ * These emotions are optimized for TTS synthesis with Cartesia Sonic-3
+ */
+const COMMAND_RESPONSE_EMOTIONS: Record<string, string> = {
+  emergency: 'determined',
+  clockIn: 'enthusiastic',
+  clockOut: 'grateful',
+  weather: 'calm',
+  safety: 'determined',
+  projectStatus: 'confident',
+  scheduleWork: 'confident',
+  checkPermit: 'neutral',
+  general: 'sympathetic',
+}
+
+/**
+ * Get the appropriate response emotion based on command type
+ * @param commandType - The detected command type
+ * @param overrideEmotion - Optional emotion override from request
+ * @returns Valid Cartesia emotion for TTS synthesis
+ */
+function getResponseEmotion(commandType: string, overrideEmotion?: string): string {
+  // Override takes precedence if valid
+  if (overrideEmotion) {
+    const validated = validateEmotion(overrideEmotion)
+    if (validated !== 'neutral' || overrideEmotion === 'neutral') {
+      return validated
+    }
+  }
+
+  // Use command type mapping
+  return COMMAND_RESPONSE_EMOTIONS[commandType] || 'neutral'
+}
 
 // Validation schema
 const voiceCommandSchema = z.object({
@@ -66,22 +102,30 @@ export async function POST(request: NextRequest) {
     
     // Process command
     const commandType = detectCommandType(validatedData.command)
-    
+
+    // Detect emotion from command text or use override
+    const inputEmotion = validatedData.emotion || detectEmotionFromText(validatedData.command)
+
+    // Get appropriate response emotion for TTS synthesis
+    const responseEmotion = getResponseEmotion(commandType, validatedData.emotion)
+
     console.log('[VOICE_COMMAND_PROCESSING]', {
       requestId,
       userId: auth.userId,
       command: validatedData.command,
       commandType,
+      inputEmotion,
+      responseEmotion,
       context: validatedData.context,
     })
-    
+
     const response = await processCommand(
       commandType,
       validatedData.command,
       validatedData.context,
       auth.userId
     )
-    
+
     // Log voice interaction - aligned with Prisma VoiceInteraction schema
     // Use type assertion for optional duration field
     const responseDuration = 'duration' in response ? (response as { duration?: number }).duration : undefined
@@ -97,23 +141,26 @@ export async function POST(request: NextRequest) {
         projectContext: validatedData.context ? JSON.parse(JSON.stringify(validatedData.context)) : undefined,
       },
     })
-    
+
     const duration = Date.now() - startTime
-    
+
     console.log('[VOICE_COMMAND_SUCCESS]', {
       requestId,
       userId: auth.userId,
       commandType,
       duration,
       confidence: response.confidence,
+      emotion: responseEmotion,
     })
-    
+
     return NextResponse.json({
       success: true,
       type: commandType,
       response: response.message,
       data: response.data,
       actions: response.actions,
+      emotion: responseEmotion,
+      inputEmotion,
       requestId,
       duration,
     })

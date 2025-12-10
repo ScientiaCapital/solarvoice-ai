@@ -1,9 +1,3 @@
-# Secure and sensitive files
-secure/
-LIVE_DEPLOYMENT_INSTRUCTIONS.md
-ULTRA_ELITE_FINAL_STATUS.md
-VENTURE_SCALE_MASTER_PLAN.md
-
 # Environment files
 .env
 .env.local
@@ -34,3 +28,30 @@ Thumbs.db
 tmp/
 temp/
 .vercel
+
+# ========================================
+# PROPRIETARY IP - DO NOT COMMIT
+# ========================================
+
+# Voice AI prompts and configurations
+prompts-import/
+**/prompts/
+
+# Emotion processing (secret sauce)
+**/lib/voice/emotions.ts
+**/lib/voice/emotions/
+**/__tests__/voice/emotions*
+
+# Voice service configurations
+**/lib/services/cartesia.ts
+**/lib/services/cerebras.ts
+
+# Prompt loader (IP)
+**/lib/prompt-loader.ts
+
+# LLM factory (IP)
+**/lib/llm-factory.ts
+
+# Voice API routes with emotion logic
+**/app/api/voice/command/route.ts
+**/app/api/voice/synthesize/route.ts

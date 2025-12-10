@@ -1,68 +1,31 @@
 {
-  "name": "solarvoice-platform-monorepo",
+  "name": "solarvoice-ai",
   "version": "1.0.0",
-  "description": "SolarVoice AI Platform - Ultra Elite Monorepo",
+  "description": "SolarVoice AI - Voice Agent Marketplace for MEP & Energy Contractors",
   "private": true,
   "workspaces": [
-    "solarvoice-platform",
-    "vercel-deployments/*",
-    "ultra-elite-test",
-    "shared/*"
+    "vercel-deployments/solarvoice"
   ],
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
   },
   "scripts": {
-    "build": "npm run build --workspaces",
-    "test": "npm run test --workspaces",
-    "lint": "npm run lint --workspaces",
-    "type-check": "npm run type-check --workspaces",
-    "clean": "npm run clean --workspaces",
-    "dev": "npm run dev --workspace=solarvoice-platform",
-    "postinstall": "echo '🚀 SolarVoice AI Platform - Ultra Elite Monorepo Ready'",
-    "lint:principal-architect": "eslint shared/**/*.ts --config .eslintrc.json --ext .ts",
-    "lint:fix": "eslint shared/**/*.ts --config .eslintrc.json --ext .ts --fix",
-    "format": "prettier --write shared/**/*.ts",
-    "format:check": "prettier --check shared/**/*.ts",
-    "type-check:shared": "tsc --noEmit --project tsconfig.json",
-    "quality:check": "npm run lint:principal-architect && npm run format:check && npm run type-check:shared",
-    "quality:fix": "npm run lint:fix && npm run format",
-    "validate:voice-ai": "eslint shared/voice/**/*.ts --config .eslintrc.json --ext .ts",
-    "validate:payments": "eslint shared/payments/**/*.ts --config .eslintrc.json --ext .ts",
-    "validate:sales": "eslint shared/sales/**/*.ts --config .eslintrc.json --ext .ts",
-    "validate:agents": "eslint shared/agents/**/*.ts --config .eslintrc.json --ext .ts",
-    "principal-architect:audit": "npm run quality:check && echo '🏗️ PRINCIPAL ARCHITECT STANDARDS: VALIDATION COMPLETE'",
+    "dev": "npm run dev --workspace=solarvoice",
+    "build": "npm run build --workspace=solarvoice",
+    "test": "npm run test --workspace=solarvoice",
+    "lint": "npm run lint --workspace=solarvoice",
+    "postinstall": "echo '🚀 SolarVoice AI Ready'",
     "prepare": "husky install"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "concurrently": "^8.2.0",
     "eslint": "^8.56.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsdoc": "^48.0.4",
     "husky": "^8.0.3",
-    "lint-staged": "^15.2.0",
     "prettier": "^3.2.5",
-    "turbo": "^1.13.4",
     "typescript": "^5.3.3"
   },
-  "lint-staged": {
-    "shared/**/*.ts": [
-      "eslint --config .eslintrc.json --fix",
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "author": "SolarVoice Ultra Elite AI Team",
-  "license": "MIT",
-  "dependencies": {
-    "@radix-ui/react-label": "^2.1.7",
-    "@radix-ui/react-slot": "^1.2.3",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.294.0",
-    "tailwind-merge": "^2.6.0"
-  }
+  "author": "SolarVoice AI",
+  "license": "MIT"
 }

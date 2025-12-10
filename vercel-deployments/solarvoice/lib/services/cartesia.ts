@@ -1,147 +1,187 @@
-// =============================================================
-// CARTESIA SERVICE - Text-to-Speech (Primary TTS Provider)
-// =============================================================
-// Status: STUB - Ready for implementation
-// API Key: CARTESIA_API_KEY
-// Docs: https://docs.cartesia.ai/
-// Features: Ultra-low latency, streaming, emotion control
-// =============================================================
-
-// TODO: Install @cartesia/cartesia-js when implementing
-// npm install @cartesia/cartesia-js
+/**
+ * Cartesia TTS Service - Ultra-low latency text-to-speech
+ * Port from Vozlux: /src/vozlux/voice/providers/cartesia_tts.py
+ *
+ * Target: <90ms TTFA (Time to First Audio)
+ * Model: Sonic-3 with emotional controls
+ * API: REST with SSE streaming
+ */
 
 export interface CartesiaSynthesisOptions {
-  voiceId?: string
-  modelId?: 'sonic-english' | 'sonic-multilingual'
-  language?: 'en' | 'es' | 'fr' | 'de' | 'it' | 'pt' | 'zh' | 'ja' | 'ko'
-  speed?: number // 0.5 - 2.0
-  emotion?: {
-    name: 'neutral' | 'happy' | 'sad' | 'angry' | 'fearful' | 'surprised'
-    level: 'low' | 'medium' | 'high'
-  }
+  voiceId: string
+  emotion?: string
+  language?: string
+  speed?: number
 }
 
-export interface CartesiaVoice {
-  id: string
-  name: string
-  description: string
-  language: string
-  gender: 'male' | 'female' | 'neutral'
+export interface CartesiaConfig {
+  model?: string
+  sampleRate?: number
 }
 
-class CartesiaService {
-  private apiKey: string | undefined
+/**
+ * Voice presets by agent type and language
+ * Using Cartesia's default voices - replace with custom cloned voices as needed
+ */
+const VOICE_PRESETS: Record<string, Record<string, string>> = {
+  // English voices
+  en: {
+    'commercial-manager': 'a0e99841-438c-4a64-b679-ae501e7d6091', // Professional male
+    'customer-success': '694f9389-aac1-45b6-b726-9d9369183238', // Friendly female
+    'performance-analyst': 'bf991597-6c13-47e4-8411-91ec2de5c466', // Technical neutral
+    'sales-specialist': '2ee87190-8f84-4925-97da-e52547f9462c', // Confident male
+    'utility-coordinator': 'c45bc5ec-dc68-4feb-8829-6e6b2748095d', // Authoritative female
+    default: 'a0e99841-438c-4a64-b679-ae501e7d6091', // Fallback to commercial-manager
+  },
+  // Spanish voices
+  es: {
+    'commercial-manager': 'db832eef-4e72-4208-a1e0-3c3e7e4c5e4e', // Spanish professional male
+    'customer-success': '5c5ad5e7-1020-476b-8b91-fdcbe9cc313c', // Spanish friendly female
+    'performance-analyst': 'bf991597-6c13-47e4-8411-91ec2de5c466', // Technical neutral
+    'sales-specialist': '2ee87190-8f84-4925-97da-e52547f9462c', // Confident male
+    'utility-coordinator': 'c45bc5ec-dc68-4feb-8829-6e6b2748095d', // Authoritative female
+    default: 'db832eef-4e72-4208-a1e0-3c3e7e4c5e4e', // Fallback
+  },
+}
 
-  // Default voice IDs for different agent personas
-  // TODO: Replace with actual Cartesia voice IDs after account setup
-  static readonly VOICE_PRESETS = {
-    'commercial-manager': 'voice_id_professional_male',
-    'customer-success': 'voice_id_friendly_female',
-    'performance-analyst': 'voice_id_technical_neutral',
-    'sales-specialist': 'voice_id_confident_male',
-    'utility-coordinator': 'voice_id_authoritative_female',
-  } as const
+export class CartesiaTTS {
+  private apiKey: string
+  private baseUrl = 'https://api.cartesia.ai'
+  private model: string
+  private sampleRate: number
 
-  constructor() {
-    this.apiKey = process.env.CARTESIA_API_KEY
-    if (!this.apiKey) {
-      console.warn('[CARTESIA] API key not configured. Set CARTESIA_API_KEY in .env')
+  constructor(config: CartesiaConfig = {}) {
+    const apiKey = process.env.CARTESIA_API_KEY
+    if (!apiKey) {
+      throw new Error('CARTESIA_API_KEY not configured')
     }
+    this.apiKey = apiKey
+    this.model = config.model || 'sonic-3'
+    this.sampleRate = config.sampleRate || 22050
   }
 
   /**
-   * Check if Cartesia is configured and ready
+   * Get the current model
+   */
+  getModel(): string {
+    return this.model
+  }
+
+  /**
+   * Check if the service is configured
    */
   isConfigured(): boolean {
     return Boolean(this.apiKey)
   }
 
   /**
-   * Synthesize text to speech (returns audio buffer)
-   * TODO: Implement with @cartesia/cartesia-js
+   * Get voice ID for agent type and language
+   */
+  getVoiceForAgent(agentType: string, language: string = 'en'): string {
+    // Default fallback voice ID
+    const defaultVoice = 'a0e99841-438c-4a64-b679-ae501e7d6091'
+    const enVoices = VOICE_PRESETS.en ?? { default: defaultVoice }
+    const languageVoices = VOICE_PRESETS[language] ?? enVoices
+    return languageVoices[agentType] ?? languageVoices.default ?? defaultVoice
+  }
+
+  /**
+   * Synthesize text to speech
+   * Returns a ReadableStream of audio data
+   *
+   * Uses Sonic-3 API format:
+   * - generation_config for speed/emotion (NOT _experimental_voice_controls)
+   * - Single string emotions (NOT arrays with levels)
+   * - Numeric speed multipliers (0.6-1.5)
+   *
+   * @param text - Text to synthesize
+   * @param options - Synthesis options
+   * @returns ReadableStream of audio data
    */
   async synthesize(
     text: string,
-    options: CartesiaSynthesisOptions = {}
-  ): Promise<ArrayBuffer> {
-    if (!this.apiKey) {
-      throw new Error('Cartesia API key not configured')
-    }
-
-    // TODO: Implement Cartesia synthesis
-    // import Cartesia from '@cartesia/cartesia-js'
-    // const cartesia = new Cartesia({ apiKey: this.apiKey })
-    // const audio = await cartesia.tts.bytes({
-    //   modelId: options.modelId || 'sonic-english',
-    //   voice: { mode: 'id', id: options.voiceId },
-    //   transcript: text,
-    // })
-
-    console.log('[CARTESIA] synthesize called:', {
-      textLength: text.length,
-      options,
+    options: CartesiaSynthesisOptions
+  ): Promise<ReadableStream<Uint8Array>> {
+    const response = await fetch(`${this.baseUrl}/tts/sse`, {
+      method: 'POST',
+      headers: {
+        'X-API-Key': this.apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model_id: this.model,
+        transcript: text,
+        voice_id: options.voiceId,
+        output_format: {
+          container: 'raw',
+          encoding: 'pcm_s16le',
+          sample_rate: this.sampleRate,
+        },
+        language: options.language || 'en',
+        // Sonic-3 uses generation_config, NOT _experimental_voice_controls
+        generation_config: {
+          speed: options.speed || 1.0,
+          emotion: options.emotion || 'neutral',
+        },
+      }),
     })
 
-    // Placeholder - return empty buffer
-    return new ArrayBuffer(0)
+    if (!response.ok) {
+      throw new Error(`Cartesia API error: ${response.status} ${response.statusText}`)
+    }
+
+    if (!response.body) {
+      throw new Error('Cartesia API returned no body')
+    }
+
+    return response.body
   }
 
   /**
-   * Create streaming TTS connection for real-time audio
-   * TODO: Implement WebSocket streaming
+   * Synthesize and collect all audio data as ArrayBuffer
+   * Useful for non-streaming use cases
    */
-  async createStreamingConnection(
-    options: CartesiaSynthesisOptions = {}
-  ): Promise<{ stream: null; close: () => void }> {
-    if (!this.apiKey) {
-      throw new Error('Cartesia API key not configured')
+  async synthesizeBuffer(
+    text: string,
+    options: CartesiaSynthesisOptions
+  ): Promise<ArrayBuffer> {
+    const stream = await this.synthesize(text, options)
+    const reader = stream.getReader()
+    const chunks: Uint8Array[] = []
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      if (value) chunks.push(value)
     }
 
-    // TODO: Implement streaming
-    // const cartesia = new Cartesia({ apiKey: this.apiKey })
-    // const websocket = cartesia.tts.websocket({
-    //   container: 'raw',
-    //   encoding: 'pcm_f32le',
-    //   sampleRate: 44100,
-    // })
-
-    console.log('[CARTESIA] createStreamingConnection called:', options)
-
-    return {
-      stream: null,
-      close: () => console.log('[CARTESIA] Stream closed'),
-    }
-  }
-
-  /**
-   * Get available voices
-   * TODO: Implement API call to list voices
-   */
-  async getVoices(): Promise<CartesiaVoice[]> {
-    if (!this.apiKey) {
-      return []
+    // Concatenate all chunks
+    const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0)
+    const result = new Uint8Array(totalLength)
+    let offset = 0
+    for (const chunk of chunks) {
+      result.set(chunk, offset)
+      offset += chunk.length
     }
 
-    // TODO: Implement voice listing
-    // const cartesia = new Cartesia({ apiKey: this.apiKey })
-    // const voices = await cartesia.voices.list()
-
-    console.log('[CARTESIA] getVoices called')
-
-    // Placeholder - return empty array
-    return []
-  }
-
-  /**
-   * Get voice preset for agent type
-   */
-  getVoiceForAgent(agentType: keyof typeof CartesiaService.VOICE_PRESETS): string {
-    return CartesiaService.VOICE_PRESETS[agentType] || CartesiaService.VOICE_PRESETS['commercial-manager']
+    return result.buffer
   }
 }
 
-// Export singleton instance
-export const cartesiaService = new CartesiaService()
+/**
+ * Singleton instance - only created if API key is configured
+ */
+let _cartesiaTTS: CartesiaTTS | null = null
 
-// Export types
-export type { CartesiaService }
+try {
+  if (process.env.CARTESIA_API_KEY) {
+    _cartesiaTTS = new CartesiaTTS()
+  }
+} catch {
+  // API key not configured - service will be null
+}
+
+export const cartesiaTTS = _cartesiaTTS
+
+// Re-export old interface for backward compatibility
+export const cartesiaService = _cartesiaTTS
