@@ -3,9 +3,9 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   // Enable React strict mode for better development experience
   reactStrictMode: true,
-  
-  // Disable static export for dynamic features
-  output: 'standalone',
+
+  // Note: Don't use 'standalone' output on Vercel - it's for Docker/self-hosted
+  // Vercel handles the build output automatically
   
   // Disable ESLint during builds for faster deployment
   eslint: {
