@@ -39,3 +39,8 @@ prompts-import/
 
 # NOTE: Voice modules are now tracked in git
 # The actual API keys remain in .env files (never committed)
+
+# ========================================
+# Git Worktrees (isolated development)
+# ========================================
+.worktrees/
