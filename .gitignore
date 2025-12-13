@@ -30,28 +30,12 @@ temp/
 .vercel
 
 # ========================================
-# PROPRIETARY IP - DO NOT COMMIT
+# PROPRIETARY IP - External prompts only
 # ========================================
 
-# Voice AI prompts and configurations
+# Voice AI prompts (external config files only)
 prompts-import/
 **/prompts/
 
-# Emotion processing (secret sauce)
-**/lib/voice/emotions.ts
-**/lib/voice/emotions/
-**/__tests__/voice/emotions*
-
-# Voice service configurations
-**/lib/services/cartesia.ts
-**/lib/services/cerebras.ts
-
-# Prompt loader (IP)
-**/lib/prompt-loader.ts
-
-# LLM factory (IP)
-**/lib/llm-factory.ts
-
-# Voice API routes with emotion logic
-**/app/api/voice/command/route.ts
-**/app/api/voice/synthesize/route.ts
+# NOTE: Voice modules are now tracked in git
+# The actual API keys remain in .env files (never committed)
