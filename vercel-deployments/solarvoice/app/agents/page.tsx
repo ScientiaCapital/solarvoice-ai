@@ -6,8 +6,7 @@
  * Browse and filter all 19 MEP+Energy voice agents.
  */
 
-import { useState, useEffect, useMemo } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useMemo } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { AgentMarketplaceCard } from "@/components/agents/AgentMarketplaceCard"
@@ -22,7 +21,6 @@ import { Search, LayoutGrid, List, Mic } from "lucide-react"
 import Link from "next/link"
 
 export default function AgentsMarketplacePage() {
-  const router = useRouter()
   const [agents] = useState<AgentType[]>(getAllAgents())
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTrades, setSelectedTrades] = useState<Trade[]>([])

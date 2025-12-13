@@ -18,7 +18,6 @@ import {
   Shield,
   Building,
   Factory,
-  Warehouse,
   Radio,
 } from "lucide-react"
 

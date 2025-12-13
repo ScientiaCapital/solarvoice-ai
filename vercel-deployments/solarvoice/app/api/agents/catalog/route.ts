@@ -6,7 +6,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { getAllAgents, getAgentsByTrade, getAgentsByScale, type Trade, type Scale, TRADES, SCALES } from "@/lib/agent-types"
+import { getAllAgents, type Trade, type Scale, TRADES, SCALES } from "@/lib/agent-types"
 
 export async function GET(request: Request) {
   try {

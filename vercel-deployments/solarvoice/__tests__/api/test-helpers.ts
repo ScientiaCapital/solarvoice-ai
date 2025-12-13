@@ -17,26 +17,23 @@ export function createMockNextRequest(
   } = {}
 ): NextRequest {
   const { method = 'GET', headers = {}, body } = options
-  
+
   // Create headers with proper content-type
   const requestHeaders = new Headers(headers)
   if (body && !requestHeaders.has('content-type')) {
     requestHeaders.set('content-type', 'application/json')
   }
-  
-  // Create init options
-  const init: RequestInit = {
+
+  // Create a standard Request first
+  const request = new Request(url, {
     method,
     headers: requestHeaders,
-  }
-  
-  // Add body if present
-  if (body) {
-    init.body = JSON.stringify(body)
-  }
-  
-  // Create NextRequest with URL and init
-  return new NextRequest(url, init)
+    body: body ? JSON.stringify(body) : undefined,
+    duplex: 'half', // Required for requests with body
+  } as RequestInit)
+
+  // Cast to NextRequest (NextRequest extends Request)
+  return request as NextRequest
 }
 
 /**

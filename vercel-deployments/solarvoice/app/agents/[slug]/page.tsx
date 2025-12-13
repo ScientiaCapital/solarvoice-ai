@@ -7,7 +7,6 @@
  */
 
 import { useState, useEffect, use } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -72,10 +71,8 @@ export default function AgentDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = use(params)
-  const router = useRouter()
   const [agent, setAgent] = useState<AgentType | null>(null)
   const [promptData, setPromptData] = useState<PromptData | null>(null)
-  const [loading, setLoading] = useState(true)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
 
   useEffect(() => {
@@ -92,7 +89,7 @@ export default function AgentDetailPage({
           setPromptData(data.prompt)
         }
       })
-      .finally(() => setLoading(false))
+      .finally(() => {})
   }, [slug])
 
   const handleRent = async () => {

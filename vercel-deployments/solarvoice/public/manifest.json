@@ -37,5 +37,43 @@
       "sizes": "1280x720",
       "type": "image/png"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse Agents",
+      "short_name": "Agents",
+      "description": "Explore AI solar agents",
+      "url": "/agents",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your dashboard",
+      "url": "/dashboard",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Pricing",
+      "short_name": "Pricing",
+      "description": "View pricing plans",
+      "url": "/pricing",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }

@@ -15,10 +15,10 @@ interface MetricsCardProps {
   value: string | number
   description?: string
   icon?: LucideIcon
-  trend?: {
+  trend: {
     value: string
     isPositive: boolean
-  }
+  } | undefined
   iconColor?: string
   className?: string
   onClick?: () => void

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import { Inter, Space_Grotesk } from "next/font/google"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { PWAInstaller } from "@/components/pwa-installer"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 
@@ -113,6 +114,7 @@ export default function RootLayout({
           spaceGrotesk.variable
         )}
       >
+        <PWAInstaller />
         {children}
         <Analytics />
         <SpeedInsights />

@@ -5,20 +5,6 @@
  * Follows Vozlux BUSINESS_TYPES pattern for consistency.
  */
 
-import {
-  Sun,
-  Building,
-  Factory,
-  Zap,
-  Flame,
-  Droplet,
-  Home,
-  Shield,
-  Cable,
-  Bell,
-  type LucideIcon,
-} from "lucide-react"
-
 // Trade types
 export const TRADES = [
   "Solar",
