@@ -35,7 +35,7 @@ const nextConfig: NextConfig = {
   // Experimental features for better performance
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
-    typedRoutes: true,
+    // Note: typedRoutes removed - causes issues with Vercel deployment
   },
   
   // Headers for security and performance
