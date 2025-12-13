@@ -1,6 +1,6 @@
 # SolarVoice AI - Project Context
 
-**Last Updated**: 2025-12-10
+**Last Updated**: 2025-12-13
 **Current Branch**: main
 **Repository**: https://github.com/ScientiaCapital/solarvoice-ai
 
@@ -25,9 +25,45 @@
 | Build | PASSING | Production build succeeds |
 | Database | Not Connected | User to configure DATABASE_URL in .env |
 | Authentication | Custom JWT | Uses lib/auth.ts, not next-auth |
-| Voice Services | Browser TTS | ElevenLabs REMOVED - using browser fallback |
-| Payments | Partial | Stripe SDK installed, routes need schema alignment |
+| Voice Services | voice-ai-core | NEW: lib/voice/ template (86 tests) |
+| Payments | Partial | NEW: /billing pages + checkout API |
 | AI Integration | Anthropic Only | NO OPENAI |
+
+---
+
+## Done (Session 2025-12-13)
+
+### Wave 1: Voice Integration Template - COMPLETE
+- Created `lib/voice/` universal template for voice-ai-core integration
+- `types.ts` - TypeScript interfaces with type guards (28 tests)
+- `client.ts` - VoiceClient HTTP client for TTS/STT services (46 tests)
+- `config.ts` - Environment configuration
+- `hooks/useVoice.ts` - TTS playback with Web Audio API
+- `hooks/useSpeechRecognition.ts` - STT with Web Speech API
+- `components/VoiceButton.tsx` - Push-to-talk component (12 tests)
+- Fixed TypeScript strict mode errors (`exactOptionalPropertyTypes`)
+
+### Billing Migration (FieldVault Pattern) - COMPLETE
+- Created `/billing` page with usage metrics, transaction history
+- Created `/billing/plans` comparison page with 3 tiers
+- Created `/api/billing/create-checkout` Stripe session endpoint
+- Updated sidebar navigation with billing links
+
+### Security & Quality
+- Secrets scan: PASSED (no hardcoded keys)
+- Dependency audit: PASSED (0 vulnerabilities)
+- Next.js updated to 15.5.9 (security patches)
+- Tests: 86/86 voice tests passing
+
+---
+
+## Next Session Focus
+
+1. [ ] Wave 2: Create Supabase database schema
+2. [ ] Wave 3: Migrate dashboard pages from Vozlux
+3. [ ] Wave 4: API routes + Twilio integration
+4. [ ] Set up voice-ai-core as separate GitHub repo
+5. [ ] Deploy voice-ai-core Python services (Docker)
 
 ---
 
@@ -35,13 +71,13 @@
 
 | Layer | Technology | Version |
 |-------|------------|---------|
-| Frontend | Next.js + React | 15.4.8 / 18.3.1 |
-| Styling | Tailwind CSS | 3.4.10 |
+| Frontend | Next.js + React | 15.5.9 / 19.0 |
+| Styling | Tailwind CSS | 4.0 |
 | State | Zustand | Latest |
 | ORM | Prisma | 6.13 |
 | Database | Supabase PostgreSQL | - |
-| Voice TTS | Browser speechSynthesis | Native |
-| Voice STT | Web Speech API | - |
+| Voice TTS | voice-ai-core (Cartesia) | Port 8001 |
+| Voice STT | voice-ai-core (Deepgram) | Port 8002 |
 | AI | Anthropic Claude | **ONLY** |
 | Payments | Stripe | 18.4 |
 | Deployment | Vercel | - |

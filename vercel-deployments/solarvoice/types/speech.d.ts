@@ -1,101 +1,92 @@
 // TypeScript declarations for Web Speech API
 
-interface Window {
-  SpeechRecognition?: typeof SpeechRecognition
-  webkitSpeechRecognition?: typeof SpeechRecognition
-  speechRecognition?: SpeechRecognition
-}
+declare global {
+  interface Window {
+    SpeechRecognition?: typeof SpeechRecognition
+    webkitSpeechRecognition?: typeof SpeechRecognition
+    speechRecognition?: SpeechRecognition
+  }
 
-interface SpeechRecognition extends EventTarget {
-  continuous: boolean
-  grammars: SpeechGrammarList
-  interimResults: boolean
-  lang: string
-  maxAlternatives: number
-  serviceURI: string
-  
-  // Event handlers
-  onaudioend: ((this: SpeechRecognition, ev: Event) => any) | null
-  onaudiostart: ((this: SpeechRecognition, ev: Event) => any) | null
-  onend: ((this: SpeechRecognition, ev: Event) => any) | null
-  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null
-  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null
-  onsoundend: ((this: SpeechRecognition, ev: Event) => any) | null
-  onsoundstart: ((this: SpeechRecognition, ev: Event) => any) | null
-  onspeechend: ((this: SpeechRecognition, ev: Event) => any) | null
-  onspeechstart: ((this: SpeechRecognition, ev: Event) => any) | null
-  onstart: ((this: SpeechRecognition, ev: Event) => any) | null
-  
-  // Methods
-  abort(): void
-  start(): void
-  stop(): void
-}
+  interface SpeechRecognition extends EventTarget {
+    continuous: boolean
+    grammars: SpeechGrammarList
+    interimResults: boolean
+    lang: string
+    maxAlternatives: number
+    serviceURI: string
 
-declare var SpeechRecognition: {
-  prototype: SpeechRecognition
-  new(): SpeechRecognition
-} | undefined
+    // Event handlers
+    onaudioend: ((this: SpeechRecognition, ev: Event) => unknown) | null
+    onaudiostart: ((this: SpeechRecognition, ev: Event) => unknown) | null
+    onend: ((this: SpeechRecognition, ev: Event) => unknown) | null
+    onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => unknown) | null
+    onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => unknown) | null
+    onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => unknown) | null
+    onsoundend: ((this: SpeechRecognition, ev: Event) => unknown) | null
+    onsoundstart: ((this: SpeechRecognition, ev: Event) => unknown) | null
+    onspeechend: ((this: SpeechRecognition, ev: Event) => unknown) | null
+    onspeechstart: ((this: SpeechRecognition, ev: Event) => unknown) | null
+    onstart: ((this: SpeechRecognition, ev: Event) => unknown) | null
 
-interface SpeechRecognitionEvent extends Event {
-  readonly resultIndex: number
-  readonly results: SpeechRecognitionResultList
-}
+    // Methods
+    abort(): void
+    start(): void
+    stop(): void
+  }
 
-interface SpeechRecognitionErrorEvent extends Event {
-  readonly error: 
-    | 'no-speech'
-    | 'aborted'
-    | 'audio-capture'
-    | 'network'
-    | 'not-allowed'
-    | 'service-not-allowed'
-    | 'bad-grammar'
-    | 'language-not-supported'
-  readonly message: string
-}
+  var SpeechRecognition: {
+    prototype: SpeechRecognition
+    new(): SpeechRecognition
+  } | undefined
 
-interface SpeechRecognitionResultList {
-  readonly length: number
-  item(index: number): SpeechRecognitionResult
-  [index: number]: SpeechRecognitionResult
-}
+  interface SpeechRecognitionEvent extends Event {
+    readonly resultIndex: number
+    readonly results: SpeechRecognitionResultList
+  }
 
-interface SpeechRecognitionResult {
-  readonly isFinal: boolean
-  readonly length: number
-  item(index: number): SpeechRecognitionAlternative
-  [index: number]: SpeechRecognitionAlternative
-}
+  interface SpeechRecognitionErrorEvent extends Event {
+    readonly error:
+      | 'no-speech'
+      | 'aborted'
+      | 'audio-capture'
+      | 'network'
+      | 'not-allowed'
+      | 'service-not-allowed'
+      | 'bad-grammar'
+      | 'language-not-supported'
+    readonly message: string
+  }
 
-interface SpeechRecognitionAlternative {
-  readonly confidence: number
-  readonly transcript: string
-}
+  interface SpeechRecognitionResultList {
+    readonly length: number
+    item(index: number): SpeechRecognitionResult
+    [index: number]: SpeechRecognitionResult
+  }
 
-interface SpeechGrammarList {
-  readonly length: number
-  addFromString(string: string, weight?: number): void
-  addFromURI(src: string, weight?: number): void
-  item(index: number): SpeechGrammar
-  [index: number]: SpeechGrammar
-}
+  interface SpeechRecognitionResult {
+    readonly isFinal: boolean
+    readonly length: number
+    item(index: number): SpeechRecognitionAlternative
+    [index: number]: SpeechRecognitionAlternative
+  }
 
-interface SpeechGrammar {
-  src: string
-  weight: number
-}
+  interface SpeechRecognitionAlternative {
+    readonly confidence: number
+    readonly transcript: string
+  }
 
-// Extend existing SpeechSynthesisUtterance interface if needed
-interface SpeechSynthesisUtterance {
-  onboundary?: ((this: SpeechSynthesisUtterance, ev: SpeechSynthesisEvent) => any) | null
-  onend?: ((this: SpeechSynthesisUtterance, ev: SpeechSynthesisEvent) => any) | null
-  onerror?: ((this: SpeechSynthesisUtterance, ev: SpeechSynthesisErrorEvent) => any) | null
-  onmark?: ((this: SpeechSynthesisUtterance, ev: SpeechSynthesisEvent) => any) | null
-  onpause?: ((this: SpeechSynthesisUtterance, ev: SpeechSynthesisEvent) => any) | null
-  onresume?: ((this: SpeechSynthesisUtterance, ev: SpeechSynthesisEvent) => any) | null
-  onstart?: ((this: SpeechSynthesisUtterance, ev: SpeechSynthesisEvent) => any) | null
+  interface SpeechGrammarList {
+    readonly length: number
+    addFromString(string: string, weight?: number): void
+    addFromURI(src: string, weight?: number): void
+    item(index: number): SpeechGrammar
+    [index: number]: SpeechGrammar
+  }
+
+  interface SpeechGrammar {
+    src: string
+    weight: number
+  }
 }
 
 export {}

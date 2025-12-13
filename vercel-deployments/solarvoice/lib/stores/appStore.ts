@@ -6,51 +6,7 @@ import { devtools, persist } from 'zustand/middleware'
 // Agent IDs for voice selection
 type AgentId = 'commercial-manager' | 'customer-success' | 'performance-analyst' | 'sales-specialist' | 'utility-coordinator'
 
-// Speech API Types (inline to avoid import issues)
-declare global {
-  interface Window {
-    SpeechRecognition?: typeof SpeechRecognition
-    webkitSpeechRecognition?: typeof SpeechRecognition
-    speechRecognition?: any
-  }
-  
-  interface SpeechRecognition {
-    continuous: boolean
-    interimResults: boolean
-    lang: string
-    onstart: (() => void) | null
-    onresult: ((event: SpeechRecognitionEventResult) => void) | null
-    onerror: ((event: SpeechRecognitionErrorEventResult) => void) | null
-    onend: (() => void) | null
-    start(): void
-    stop(): void
-  }
-  
-  var SpeechRecognition: {
-    prototype: SpeechRecognition
-    new(): SpeechRecognition
-  } | undefined
-}
-
-type SpeechRecognitionEventResult = {
-  readonly resultIndex: number
-  readonly results: {
-    readonly length: number
-    [index: number]: {
-      readonly isFinal: boolean
-      readonly length: number
-      [index: number]: {
-        readonly confidence: number
-        readonly transcript: string
-      }
-    }
-  }
-}
-
-type SpeechRecognitionErrorEventResult = {
-  readonly error: 'no-speech' | 'aborted' | 'audio-capture' | 'network' | 'not-allowed' | 'service-not-allowed' | 'bad-grammar' | 'language-not-supported'
-  readonly message: string
-}
+// Speech API Types imported from @/types/speech.d.ts (global declarations)
 
 // Types
 interface Agent {
@@ -337,21 +293,23 @@ export const useAppStore = create<AppState>()(
             set({ isListening: true, error: null })
           }
           
-          recognition.onresult = (event: SpeechRecognitionEventResult) => {
+          recognition.onresult = (event: SpeechRecognitionEvent) => {
             let finalTranscript = ''
             let interimTranscript = ''
-            
+
             for (let i = event.resultIndex; i < event.results.length; i++) {
               const result = event.results[i]
-              if (!result || !result[0]) continue
-              
-              const transcript = result[0].transcript
-              const confidence = result[0].confidence
-              
+              if (!result) continue
+              const alternative = result[0]
+              if (!alternative) continue
+
+              const transcript = alternative.transcript
+              const confidence = alternative.confidence
+
               if (result.isFinal) {
                 finalTranscript += transcript
                 set({ transcript: finalTranscript, confidence: confidence || 0 })
-                
+
                 // Process voice commands
                 get().processVoiceCommand(finalTranscript.toLowerCase().trim())
               } else {
@@ -360,8 +318,8 @@ export const useAppStore = create<AppState>()(
               }
             }
           }
-          
-          recognition.onerror = (event: SpeechRecognitionErrorEventResult) => {
+
+          recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
             const errorMessage = event.error === 'no-speech' 
               ? 'No speech detected. Please try again.'
               : `Speech recognition error: ${event.error}`

@@ -22,14 +22,27 @@ interface SidebarLayoutProps {
   children: ReactNode
 }
 
-const navItems = [
+// Main navigation items
+const mainNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
   { href: '/dashboard/agents', label: 'AI Agents', icon: Bot },
   { href: '/dashboard/conversations', label: 'Conversations', icon: MessageSquare },
   { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
-  { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
 ]
+
+// Billing section items
+const billingNavItems = [
+  { href: '/billing', label: 'Billing', icon: CreditCard },
+  { href: '/billing/plans', label: 'Plans', icon: CreditCard },
+]
+
+// Settings section items
+const settingsNavItems = [
+  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+]
+
+// Combined for backward compatibility
+const navItems = [...mainNavItems, ...billingNavItems, ...settingsNavItems]
 
 export default function SidebarLayout({ children }: SidebarLayoutProps) {
   const pathname = usePathname()
